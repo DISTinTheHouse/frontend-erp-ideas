@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ERP UI</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Theme auto (antes del primer render) -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+
+      function applySystemTheme() {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) {
+          root.classList.add('dark');
+          root.setAttribute('data-bs-theme', 'dark');
+        } else {
+          root.classList.remove('dark');
+          root.setAttribute('data-bs-theme', 'light');
+        }
+      }
+
+      applySystemTheme();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+    })();
+  </script>
+
+  <!-- Footer font (solo footer) -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    footer.erp-footer { font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-900 dark:text-white bg-white dark:bg-black flex flex-col it">
+
+  <!-- Fondo -->
+  <div class="pointer-events-none fixed inset-0 z-0
+              bg-[radial-gradient(110%_70%_at_50%_-10%,rgba(56,189,248,0.28),rgba(255,255,255,0))]
+              dark:bg-[radial-gradient(120%_85%_at_50%_-20%,rgba(56,189,248,0.22),rgba(17,17,19,0))]">
+  </div>
+
+  <!-- WRAPPER -->
+  <div class="relative z-10 min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-transparent">
+    <div class="mx-auto max-w-7xl px-4 py-4">
+        <!-- wrapper para centrar el pill -->
+        <div class="flex justify-center">
+        <nav class="w-full max-w-6xl flex items-center justify-between
+                    px-6 py-4 rounded-full text-sm relative
+                    border border-slate-300/30 dark:border-slate-700/60
+                    bg-white/50 dark:bg-black/40 backdrop-blur-xl
+                    text-slate-900 dark:text-white">
+
+            <!-- Logo -->
+            <a href="#" aria-label="Inicio ERP" class="shrink-0">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <circle cx="4.706" cy="16" r="4.706" class="fill-slate-900/80 dark:fill-white/80" />
+                <circle cx="16.001" cy="4.706" r="4.706" class="fill-slate-900/80 dark:fill-white/80" />
+                <circle cx="16.001" cy="27.294" r="4.706" class="fill-slate-900/80 dark:fill-white/80" />
+                <circle cx="27.294" cy="16" r="4.706" class="fill-slate-900/80 dark:fill-white/80" />
+            </svg>
+            </a>
+
+            <!-- Desktop menu (CENTRADO REAL) -->
+            <div class="hidden md:flex flex-1 items-center justify-center gap-6 px-6 text-xs tracking-wide">
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Pedidos</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Pedidos</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Producción</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Producción</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Inventarios</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Inventarios</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Órdenes</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Órdenes</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Recepciones</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Recepciones</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Facturación</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Facturación</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">CxP</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">CxP</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">CxC</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">CxC</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Bancos</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Bancos</span>
+            </a>
+            <a href="#" class="relative overflow-hidden h-5 group">
+                <span class="block group-hover:-translate-y-full transition-transform duration-300">Contabilidad</span>
+                <span class="block absolute top-full left-0 group-hover:-translate-y-full transition-transform duration-300">Contabilidad</span>
+            </a>
+            </div>
+
+            <!-- Actions (Mismo look del diseño negro) -->
+            <div class="hidden md:flex items-center gap-4 shrink-0">
+            <button
+                class="border border-slate-400/50 dark:border-slate-600
+                    hover:bg-slate-900/5 dark:hover:bg-slate-800
+                    px-4 py-2 rounded-full text-xs font-semibold transition">
+                Configuración
+            </button>
+
+            <button
+            class="
+                px-4 py-2 rounded-full text-xs font-semibold transition duration-300
+
+                /* LIGHT MODE */
+                bg-black text-white
+                shadow-[0px_0px_30px_8px] shadow-black/40
+                hover:shadow-[0px_0px_30px_14px] hover:shadow-black/50
+
+                /* DARK MODE */
+                dark:bg-white dark:text-black
+                dark:shadow-[0px_0px_30px_8px] dark:shadow-white/40
+                dark:hover:shadow-[0px_0px_30px_14px] dark:hover:shadow-white/50
+            ">
+            Cerrar sesión
+            </button>
+
+            </div>
+
+            <!-- Mobile toggle -->
+            <button id="menuToggle" class="md:hidden text-slate-700 dark:text-gray-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            </button>
+
+            <!-- Mobile menu -->
+            <div id="mobileMenu"
+    class="absolute top-full left-0 w-full hidden md:hidden mt-3 p-4
+            rounded-3xl
+            border border-slate-200/70 dark:border-slate-800/70
+            bg-white/95 dark:bg-black/95
+            text-slate-800 dark:text-slate-100
+            shadow-[0px_16px_45px_-22px_rgba(0,0,0,0.45)]
+            ring-1 ring-black/5 dark:ring-white/10">
+
+    <!-- Header mini -->
+    <div class="flex items-center justify-between px-1">
+        <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+        Módulos
+        </p>
+        <span class="text-[10px] text-slate-400 dark:text-slate-500">
+        ERP
+        </span>
+    </div>
+
+    <!-- Links -->
+    <ul class="mt-2 space-y-0.5">
+        <!-- Item -->
+        <li>
+        <a href="#"
+            class="group flex items-center justify-between px-3 py-2.5 rounded-xl
+                    text-[13px] font-medium
+                    text-slate-700 dark:text-slate-200
+                    hover:bg-slate-900/5 dark:hover:bg-white/5
+                    active:scale-[0.98] transition">
+            <span>Pedidos</span>
+            <span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 transition">→</span>
+        </a>
+        </li>
+
+        <!-- Duplica este bloque para cada módulo -->
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>Producción</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>Inventarios</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>Órdenes</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>Recepciones</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>Facturación</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>CxP</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>CxC</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>Bancos</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+        <li><a href="#" class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/5 active:scale-[0.98] transition"><span>Contabilidad</span><span class="text-[11px] text-slate-400 dark:text-slate-500 group-hover:text-indigo-500">→</span></a></li>
+    </ul>
+
+    <!-- Divider -->
+    <div class="my-3 h-px bg-slate-200/70 dark:bg-slate-800/80"></div>
+
+    <!-- Actions -->
+    <div class="flex flex-col gap-2">
+        <button
+        class="w-full h-10 rounded-full text-[13px] font-semibold
+                border border-slate-300 dark:border-slate-700
+                bg-white dark:bg-black
+                text-slate-700 dark:text-slate-200
+                hover:bg-slate-50 dark:hover:bg-slate-900
+                active:scale-[0.97] transition">
+        Configuración
+        </button>
+
+        <button
+        class="w-full h-10 rounded-full text-[13px] font-semibold
+                bg-black text-white
+                shadow-[0px_0px_22px_5px] shadow-black/30
+                hover:shadow-[0px_0px_26px_8px] hover:shadow-black/40
+                dark:bg-white dark:text-black
+                dark:shadow-[0px_0px_22px_5px] dark:shadow-white/35
+                dark:hover:shadow-[0px_0px_26px_8px] dark:hover:shadow-white/45
+                active:scale-[0.97] transition">
+        Cerrar sesión
+        </button>
+    </div>
+    </div>
+
+
+
+
+
+
+        </nav>
+        </div>
+    </div>
+    </header>
+
+
+    <!-- CONTENIDO -->
+    <main class="relative z-10 mx-auto max-w-6xl px-6 pt-24 pb-20">
+      <div class="text-center py-20">
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight">
+          ERP<br class="hidden md:block" />
+          <span class="text-slate-600 dark:text-slate-300">Operación en tiempo real</span>
+        </h1>
+        <p class="text-slate-500 dark:text-slate-400 mt-4 text-base md:text-xl max-w-2xl mx-auto">
+          Pedidos, producción, inventarios y finanzas en una sola vista. Sin ruido. Solo control.
+        </p>
+      </div>
+    </main>
+
+    <!-- FOOTER  -->
+    <footer class="erp-footer mt-auto w-full flex flex-wrap justify-center lg:justify-between overflow-hidden gap-10 md:gap-20 py-16 px-6 md:px-16 lg:px-24 xl:px-32 text-[13px] text-gray-500 bg-transparent border-t border-slate-200/30 dark:border-slate-800/60">
+      <div class="flex flex-wrap items-start gap-10 md:gap-[60px] xl:gap-[140px]">
+
+        <!-- Logo -->
+        <a href="#" aria-label="ERP Home">
+          <svg width="31" height="34" viewBox="0 0 31 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="m8.75 5.3 6.75 3.884 6.75-3.885M8.75 28.58v-7.755L2 16.939m27 0-6.75 3.885v7.754M2.405 9.408 15.5 16.954l13.095-7.546M15.5 32V16.939M29 22.915V10.962a2.98 2.98 0 0 0-1.5-2.585L17 2.4a3.01 3.01 0 0 0-3 0L3.5 8.377A3 3 0 0 0 2 10.962v11.953A2.98 2.98 0 0 0 3.5 25.5L14 31.477a3.01 3.01 0 0 0 3 0L27.5 25.5a3.01 3.01 0 0 0 1.5-2.585" stroke="url(#a)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="a" x1="15.5" y1="2" x2="15.5" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#F8FAFC"/>
+                <stop offset="1" stop-color="#383838"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </a>
+
+        <!-- Operación -->
+        <div>
+          <p class="text-slate-900/90 dark:text-slate-100 font-semibold">Operación</p>
+          <ul class="mt-2 space-y-2">
+            <li><a href="#" class="hover:text-indigo-500 transition">Pedidos</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Producción</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Inventarios</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Órdenes</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Recepciones</a></li>
+          </ul>
+        </div>
+
+        <!-- Finanzas -->
+        <div>
+          <p class="text-slate-900/90 dark:text-slate-100 font-semibold">Finanzas</p>
+          <ul class="mt-2 space-y-2">
+            <li><a href="#" class="hover:text-indigo-500 transition">Facturación</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">CxP</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">CxC</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Bancos</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Contabilidad</a></li>
+          </ul>
+        </div>
+
+        <!-- Sistema -->
+        <div>
+          <p class="text-slate-900/90 dark:text-slate-100 font-semibold">Sistema</p>
+          <ul class="mt-2 space-y-2">
+            <li><a href="#" class="hover:text-indigo-500 transition">Configuración</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Usuarios y roles</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Auditoría</a></li>
+            <li><a href="#" class="hover:text-indigo-500 transition">Soporte</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right side -->
+      <div class="flex flex-col max-md:items-center max-md:text-center gap-2 items-end">
+        <p class="max-w-72 text-slate-500 dark:text-slate-400">
+          Control total de operación, inventarios y finanzas. Una sola fuente de verdad para tu empresa.
+        </p>
+
+        <div class="flex items-center gap-4 mt-3">
+          <a href="#" aria-label="Status del sistema" class="hover:text-indigo-500 transition">Estado</a>
+          <a href="#" aria-label="Centro de ayuda" class="hover:text-indigo-500 transition">Ayuda</a>
+          <a href="#" aria-label="Contacto TI" class="hover:text-indigo-500 transition">TI</a>
+        </div>
+
+        <p class="mt-4 text-center text-slate-400 dark:text-slate-600">
+          © 2025 <a href="#" class="hover:text-indigo-500 transition">ERP</a>. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- JS -->
+    <script>
+    const menuToggle = document.getElementById('menuToggle'); 
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+    </script>
+</body>
+</html>

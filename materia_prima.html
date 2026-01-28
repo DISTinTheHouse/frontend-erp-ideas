@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario de Materia Prima</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme auto -->
+    <script>
+        (function () {
+            const root = document.documentElement;
+
+            function applySystemTheme() {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) {
+                    root.classList.add('dark');
+                    root.setAttribute('data-bs-theme', 'dark');
+                } else {
+                    root.classList.remove('dark');
+                    root.setAttribute('data-bs-theme', 'light');
+                }
+            }
+
+            applySystemTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+        })();
+    </script>
+
+    <!-- Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand-font {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569; 
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    transitionProperty: {
+                        'height': 'height',
+                        'spacing': 'margin, padding',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-slate-50 dark:bg-black text-slate-900 dark:text-white min-h-screen selection:bg-sky-500 selection:text-white pb-20">
+
+    <!-- Background Gradients -->
+    <div class="pointer-events-none fixed inset-0 z-0
+              bg-[radial-gradient(110%_70%_at_50%_-10%,rgba(56,189,248,0.15),rgba(255,255,255,0))]
+              dark:bg-[radial-gradient(120%_85%_at_50%_-20%,rgba(56,189,248,0.1),rgba(17,17,19,0))]">
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/70 dark:bg-black/70 border-b border-slate-200 dark:border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <a href="core.html" class="flex items-center gap-2 group">
+                        <div class="w-8 h-8 rounded-full bg-sky-50 dark:bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Volver</span>
+                    </a>
+                    <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-2"></div>
+                    <h1 class="text-lg font-bold text-slate-900 dark:text-white brand-font tracking-tight">
+                        Inventario de Materia Prima
+                    </h1>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button type="button" id="btnSaveTop" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-5 py-2 shadow-lg shadow-sky-500/20 transition-all transform hover:-translate-y-0.5">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                        </svg>
+                        Guardar Registro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed top-20 right-5 z-50 transform transition-all duration-300 translate-x-full opacity-0">
+            <div class="bg-white dark:bg-zinc-900 border border-emerald-200 dark:border-emerald-500/30 rounded-2xl shadow-2xl p-4 flex items-center gap-3 max-w-sm">
+                <div class="shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Registro Exitoso</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">La materia prima ha sido guardada correctamente.</p>
+                </div>
+            </div>
+        </div>
+
+        <form id="inventoryForm" class="space-y-8">
+            
+            <!-- Section 1: Identificación y Clasificación -->
+            <div class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Identificación y Clasificación</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- SKU -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Código Interno (SKU) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="sku" required
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all placeholder:text-slate-400"
+                            placeholder="EJ: MP-TEL-001">
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="space-y-2 md:col-span-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Descripción <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="descripcion" required
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all placeholder:text-slate-400"
+                            placeholder="Descripción detallada del material">
+                    </div>
+
+                    <!-- Tipo -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Tipo de Materia Prima
+                        </label>
+                        <select name="tipo" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all appearance-none cursor-pointer">
+                            <option value="">Seleccionar...</option>
+                            <option value="tela">Tela</option>
+                            <option value="hilo">Hilo</option>
+                            <option value="avio">Avío</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <!-- Categoría -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Categoría
+                        </label>
+                        <input type="text" name="categoria" list="categoriasList"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all">
+                        <datalist id="categoriasList">
+                            <option value="Textiles">
+                            <option value="Mercería">
+                            <option value="Empaque">
+                        </datalist>
+                    </div>
+
+                    <!-- Subcategoría -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Subcategoría
+                        </label>
+                        <input type="text" name="subcategoria"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Características Físicas y Unidades -->
+            <div class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Características y Medidas</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Color -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Color
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="color" name="colorPicker" id="colorPicker" class="h-10 w-10 rounded cursor-pointer border-0 p-0">
+                            <input type="text" name="color" id="colorText"
+                                class="flex-1 bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all"
+                                placeholder="Nombre color">
+                        </div>
+                    </div>
+
+                    <!-- Código Color -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Código de Color
+                        </label>
+                        <input type="text" name="codigo_color" id="codigoColor"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all"
+                            placeholder="#FFFFFF">
+                    </div>
+
+                    <!-- U. Medida Base -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Unidad Base
+                        </label>
+                        <select name="unidad_base" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all">
+                            <option value="m">Metros</option>
+                            <option value="kg">Kilogramos</option>
+                            <option value="pza">Piezas</option>
+                            <option value="l">Litros</option>
+                        </select>
+                    </div>
+
+                    <!-- U. Consumo -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Unidad Consumo
+                        </label>
+                        <select name="unidad_consumo" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all">
+                            <option value="m">Metros</option>
+                            <option value="cm">Centímetros</option>
+                            <option value="g">Gramos</option>
+                        </select>
+                    </div>
+
+                    <!-- Factor Conversión -->
+                    <div class="space-y-2 group lg:col-span-2">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-sky-600 dark:group-focus-within:text-sky-400 transition-colors">
+                            Factor de Conversión
+                        </label>
+                        <div class="relative">
+                            <input type="number" step="0.0001" name="factor_conversion" value="1.0000"
+                                class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all">
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <span class="text-xs text-slate-400">Base / Consumo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Inventario y Ubicación (Dynamic Logic Here) -->
+            <div class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-sm relative overflow-hidden">
+                <!-- Decorative element -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+
+                <div class="flex items-center gap-3 mb-6 relative">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Control de Stock y Ubicación</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Almacén -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                            Almacén
+                        </label>
+                        <select name="almacen" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                            <option value="principal">Principal</option>
+                            <option value="secundario">Materia Prima</option>
+                            <option value="cuarentena">Cuarentena</option>
+                        </select>
+                    </div>
+
+                    <!-- Ubicación -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                            Ubicación Física
+                        </label>
+                        <input type="text" name="ubicacion"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                            placeholder="Pasillo-Rack-Nivel">
+                    </div>
+
+                    <!-- Lote -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                            Lote / Partida
+                        </label>
+                        <input type="text" name="lote"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Fecha Ingreso -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                            Fecha de Ingreso
+                        </label>
+                        <input type="date" name="fecha_ingreso"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                    </div>
+
+                    <div class="col-span-full h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+
+                    <!-- Stock Calculation Group -->
+                    <div class="contents" id="stockGroup">
+                        <!-- Stock Actual -->
+                        <div class="space-y-2 group">
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                                Stock Actual
+                            </label>
+                            <input type="number" name="stock_actual" id="stockActual" min="0" step="0.01" value="0"
+                                class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+
+                        <!-- Stock Comprometido -->
+                        <div class="space-y-2 group">
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                                Stock Comprometido
+                            </label>
+                            <input type="number" name="stock_comprometido" id="stockComprometido" min="0" step="0.01" value="0"
+                                class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+
+                        <!-- Stock Disponible (Read Only, Calculated) -->
+                        <div class="space-y-2 group">
+                            <label class="block text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-bold">
+                                Stock Disponible
+                            </label>
+                            <input type="number" name="stock_disponible" id="stockDisponible" readonly
+                                class="w-full bg-emerald-50/50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-xl px-4 py-3 text-sm font-bold text-emerald-700 dark:text-emerald-400 focus:outline-none cursor-not-allowed">
+                        </div>
+                    </div>
+
+                    <div class="lg:col-start-1 lg:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+                         <!-- Stock Mínimo -->
+                        <div class="space-y-2 group">
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                                Stock Mínimo
+                            </label>
+                            <input type="number" name="stock_minimo" min="0"
+                                class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+
+                        <!-- Stock Máximo -->
+                        <div class="space-y-2 group">
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                                Stock Máximo
+                            </label>
+                            <input type="number" name="stock_maximo" min="0"
+                                class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+
+                        <!-- Punto Reposición -->
+                        <div class="space-y-2 group">
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors">
+                                Punto de Reposición
+                            </label>
+                            <input type="number" name="punto_reposicion" min="0"
+                                class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Proveedores y Costos -->
+            <div class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Proveedor y Costos</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Proveedor -->
+                    <div class="space-y-2 group lg:col-span-2">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-amber-600 dark:group-focus-within:text-amber-400 transition-colors">
+                            Proveedor Principal
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" name="codigo_proveedor" placeholder="Cód." class="w-24 bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-3 text-sm text-center font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                            <input type="text" name="proveedor" placeholder="Nombre del proveedor" class="flex-1 bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Moneda -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-amber-600 dark:group-focus-within:text-amber-400 transition-colors">
+                            Moneda
+                        </label>
+                        <select name="moneda" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                            <option value="MXN">MXN - Peso Mexicano</option>
+                            <option value="USD">USD - Dólar Americano</option>
+                            <option value="EUR">EUR - Euro</option>
+                        </select>
+                    </div>
+
+                    <!-- Método Valuación -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-amber-600 dark:group-focus-within:text-amber-400 transition-colors">
+                            Método Valuación
+                        </label>
+                        <select name="metodo_valuacion" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                            <option value="promedio">Promedio Ponderado</option>
+                            <option value="peps">PEPS (Primeras entradas...)</option>
+                        </select>
+                    </div>
+
+                    <!-- Costos -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-amber-600 dark:group-focus-within:text-amber-400 transition-colors">
+                            Último Costo
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                            <input type="number" name="ultimo_costo" step="0.01"
+                                class="w-full pl-7 bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-amber-600 dark:group-focus-within:text-amber-400 transition-colors">
+                            Costo Promedio
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                            <input type="number" name="costo_promedio" step="0.01"
+                                class="w-full pl-7 bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Calidad y Estado -->
+            <div class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Calidad y Estado</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Estado -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-purple-600 dark:group-focus-within:text-purple-400 transition-colors">
+                            Estado del Material
+                        </label>
+                        <select name="estado" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <option value="activo">Activo</option>
+                            <option value="bloqueado">Bloqueado</option>
+                            <option value="obsoleto">Obsoleto</option>
+                        </select>
+                    </div>
+
+                    <!-- Doc Origen -->
+                    <div class="space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-purple-600 dark:group-focus-within:text-purple-400 transition-colors">
+                            Documento Origen
+                        </label>
+                        <input type="text" name="documento_origen" placeholder="Orden de Compra / Factura"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Checkbox Inspección -->
+                    <div class="flex items-center gap-4 h-full pt-4">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="requiere_inspeccion" id="checkInspeccion" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
+                            <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">Requiere Inspección</span>
+                        </label>
+                    </div>
+
+                    <!-- Estatus Calidad (Conditional) -->
+                    <div id="estatusCalidadContainer" class="space-y-2 group opacity-50 pointer-events-none transition-all duration-300">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-purple-600 dark:group-focus-within:text-purple-400 transition-colors">
+                            Estatus de Calidad
+                        </label>
+                        <select name="estatus_calidad" id="selectEstatusCalidad" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="aprobado">Aprobado</option>
+                            <option value="rechazado">Rechazado</option>
+                            <option value="condicionado">Condicionado</option>
+                        </select>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="col-span-full space-y-2 group">
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-purple-600 dark:group-focus-within:text-purple-400 transition-colors">
+                            Observaciones
+                        </label>
+                        <textarea name="observaciones" rows="3"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Meta Info -->
+            <div class="flex items-center justify-between text-xs text-slate-400 px-2">
+                <div class="flex gap-4">
+                    <span>Fecha de alta: <strong class="text-slate-600 dark:text-slate-300" id="fechaAltaDisplay">--/--/----</strong></span>
+                    <span>Usuario: <strong class="text-slate-600 dark:text-slate-300">Admin (Actual)</strong></span>
+                </div>
+                <div>
+                    <span>Formulario ID: MP-FORM-v1.0</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons Bottom -->
+            <div class="flex justify-end gap-4 pt-4 pb-12">
+                <button type="button" class="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" class="px-8 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-lg shadow-sky-500/30 transition-all transform hover:-translate-y-0.5">
+                    Guardar Materia Prima
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Auto-set Date
+            const dateDisplay = document.getElementById('fechaAltaDisplay');
+            const today = new Date().toLocaleDateString('es-MX');
+            dateDisplay.textContent = today;
+
+            // 2. Color Picker Sync
+            const colorPicker = document.getElementById('colorPicker');
+            const colorText = document.getElementById('colorText');
+            const codigoColor = document.getElementById('codigoColor');
+
+            colorPicker.addEventListener('input', (e) => {
+                codigoColor.value = e.target.value.toUpperCase();
+            });
+
+            codigoColor.addEventListener('input', (e) => {
+                if(e.target.value.match(/^#[0-9A-F]{6}$/i)) {
+                    colorPicker.value = e.target.value;
+                }
+            });
+
+            // 3. Dynamic Stock Calculation
+            const stockActual = document.getElementById('stockActual');
+            const stockComprometido = document.getElementById('stockComprometido');
+            const stockDisponible = document.getElementById('stockDisponible');
+
+            function updateStock() {
+                const actual = parseFloat(stockActual.value) || 0;
+                const comprometido = parseFloat(stockComprometido.value) || 0;
+                const disponible = actual - comprometido;
+                
+                stockDisponible.value = disponible.toFixed(2);
+
+                // Visual validation
+                if (disponible < 0) {
+                    stockDisponible.classList.add('text-red-600', 'bg-red-50');
+                    stockDisponible.classList.remove('text-emerald-700', 'bg-emerald-50/50');
+                } else {
+                    stockDisponible.classList.remove('text-red-600', 'bg-red-50');
+                    stockDisponible.classList.add('text-emerald-700', 'bg-emerald-50/50');
+                }
+            }
+
+            stockActual.addEventListener('input', updateStock);
+            stockComprometido.addEventListener('input', updateStock);
+
+            // 4. Conditional Quality Status
+            const checkInspeccion = document.getElementById('checkInspeccion');
+            const estatusContainer = document.getElementById('estatusCalidadContainer');
+            const selectEstatus = document.getElementById('selectEstatusCalidad');
+
+            checkInspeccion.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    estatusContainer.classList.remove('opacity-50', 'pointer-events-none');
+                    selectEstatus.removeAttribute('disabled');
+                } else {
+                    estatusContainer.classList.add('opacity-50', 'pointer-events-none');
+                    selectEstatus.setAttribute('disabled', 'true');
+                    selectEstatus.value = 'pendiente';
+                }
+            });
+
+            // 5. Submit Handling & Toast
+            const form = document.getElementById('inventoryForm');
+            const btnSaveTop = document.getElementById('btnSaveTop');
+            const toast = document.getElementById('toast');
+
+            function showToast() {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full', 'opacity-0');
+                }, 3000);
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                showToast();
+                // Here you would normally send data to backend
+                console.log('Form submitted');
+            });
+
+            btnSaveTop.addEventListener('click', () => {
+                form.requestSubmit();
+            });
+
+        });
+    </script>
+</body>
+</html>

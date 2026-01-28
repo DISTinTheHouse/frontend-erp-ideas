@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contabilidad - Póliza Contable</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme auto -->
+    <script>
+        (function () {
+            const root = document.documentElement;
+
+            function applySystemTheme() {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) {
+                    root.classList.add('dark');
+                    root.setAttribute('data-bs-theme', 'dark');
+                } else {
+                    root.classList.remove('dark');
+                    root.setAttribute('data-bs-theme', 'light');
+                }
+            }
+
+            applySystemTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+        })();
+    </script>
+
+    <!-- Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand-font {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Table Styles */
+        .table-input {
+            @apply w-full bg-transparent border-none focus:ring-0 p-2 text-sm text-slate-700 dark:text-slate-200;
+        }
+
+        .table-input:focus {
+            @apply bg-sky-50 dark:bg-sky-900/20 rounded;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    transitionProperty: {
+                        'height': 'height',
+                        'spacing': 'margin, padding',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-black text-slate-900 dark:text-white min-h-screen selection:bg-indigo-500 selection:text-white pb-24">
+
+    <!-- Background Gradients -->
+    <div class="pointer-events-none fixed inset-0 z-0
+              bg-[radial-gradient(110%_70%_at_50%_-10%,rgba(99,102,241,0.15),rgba(255,255,255,0))]
+              dark:bg-[radial-gradient(120%_85%_at_50%_-20%,rgba(99,102,241,0.1),rgba(17,17,19,0))]">
+    </div>
+
+    <!-- Header / Navbar -->
+    <header
+        class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/70 dark:bg-black/70 border-b border-slate-200 dark:border-white/10">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <a href="core.html" class="flex items-center gap-2 group">
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </div>
+                        <span
+                            class="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Volver</span>
+                    </a>
+                    <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-2"></div>
+                    <h1 class="text-lg font-bold text-slate-900 dark:text-white brand-font tracking-tight">
+                        Póliza Contable
+                    </h1>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center gap-2 text-sm font-medium">
+                        <span class="text-slate-400">Estatus:</span>
+                        <span id="statusBadge"
+                            class="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">Capturada</span>
+                    </div>
+                    <button type="button" id="btnSaveTop"
+                        class="hidden sm:inline-flex items-center justify-center rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-5 py-2 shadow-lg shadow-indigo-500/20 transition-all transform hover:-translate-y-0.5">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                            </path>
+                        </svg>
+                        Guardar Póliza
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Toast Notification -->
+        <div id="toast"
+            class="fixed top-20 right-5 z-50 transform transition-all duration-300 translate-x-full opacity-0">
+            <div
+                class="bg-white dark:bg-zinc-900 border border-emerald-200 dark:border-emerald-500/30 rounded-2xl shadow-2xl p-4 flex items-center gap-3 max-w-sm">
+                <div
+                    class="shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Póliza Guardada</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">El asiento contable se registró
+                        correctamente.</p>
+                </div>
+            </div>
+        </div>
+
+        <form id="accountingForm" class="space-y-6">
+
+            <!-- Section 1: Encabezado de la Póliza -->
+            <div
+                class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Encabezado de Póliza</h2>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <span class="mr-3 text-sm font-medium text-slate-600 dark:text-slate-400">Aplicada</span>
+                            <input type="checkbox" name="aplicada" class="sr-only peer">
+                            <div
+                                class="relative w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600">
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- Tipo Póliza -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Tipo de Póliza <span class="text-red-500">*</span>
+                        </label>
+                        <select name="tipo_poliza"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                            <option value="diario">Diario</option>
+                            <option value="ingreso">Ingreso</option>
+                            <option value="egreso">Egreso</option>
+                        </select>
+                    </div>
+
+                    <!-- Número Póliza (Auto) -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Número Póliza
+                        </label>
+                        <input type="text" name="numero_poliza" value="AUTO-001" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                    </div>
+
+                    <!-- Fecha -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Fecha <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" name="fecha" required id="fechaInput"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Fecha Contable -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Fecha Contable
+                        </label>
+                        <input type="date" name="fecha_contable" required id="fechaContableInput"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Documento -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Documento
+                        </label>
+                        <input type="text" name="documento" placeholder="Ref. Documento"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Cheque -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Cheque / Transferencia
+                        </label>
+                        <input type="text" name="cheque" placeholder="Núm. Cheque"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Moneda -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Moneda
+                        </label>
+                        <select name="moneda"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                            <option value="MXN">Peso Mexicano (MXN)</option>
+                            <option value="USD">Dólar Americano (USD)</option>
+                            <option value="EUR">Euro (EUR)</option>
+                        </select>
+                    </div>
+
+                    <!-- Origen -->
+                    <div class="space-y-1.5 group">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Origen
+                        </label>
+                        <input type="text" name="origen" placeholder="Módulo origen"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Beneficiario -->
+                    <div class="space-y-1.5 group md:col-span-2">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Beneficiario
+                        </label>
+                        <input type="text" name="beneficiario" placeholder="Nombre del beneficiario"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Concepto -->
+                    <div class="space-y-1.5 group md:col-span-2">
+                        <label
+                            class="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
+                            Concepto <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="concepto" required placeholder="Concepto general de la póliza"
+                            class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Detalle de Movimientos (Grid) -->
+            <div
+                class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/5 shadow-sm flex flex-col h-[600px]">
+                <div class="flex items-center justify-between mb-4 shrink-0">
+                    <h2 class="text-lg font-semibold text-slate-800 dark:text-white">Detalle de Movimientos</h2>
+                    <button type="button" id="btnAddRow"
+                        class="inline-flex items-center px-3 py-1.5 bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-sky-100 dark:hover:bg-sky-500/20 transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        Agregar Partida
+                    </button>
+                </div>
+
+                <!-- Table Container -->
+                <div
+                    class="flex-1 overflow-auto -mx-6 px-6 pb-2 border-b border-slate-200 dark:border-slate-800 relative">
+                    <table class="w-full min-w-[1200px] border-collapse text-left">
+                        <thead class="sticky top-0 z-10 bg-slate-50/95 dark:bg-zinc-900/95 backdrop-blur shadow-sm">
+                            <tr>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-12 text-center">
+                                    #</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">
+                                    Cuenta</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[200px]">
+                                    Descripción</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32 text-right">
+                                    Cargo</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32 text-right">
+                                    Abono</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24">
+                                    CC</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">
+                                    Referencia</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24">
+                                    Doc Rel.</th>
+                                <th
+                                    class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-10">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="entriesBody" class="divide-y divide-slate-100 dark:divide-white/5">
+                            <!-- Rows will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Footer Totals -->
+                <div class="mt-4 pt-4 flex flex-col sm:flex-row items-center justify-between gap-6 shrink-0">
+                    <div class="text-xs text-slate-400 w-full sm:w-auto">
+                        <p id="rowCountDisplay">0 partidas</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 sm:gap-8 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
+                        <div class="text-right min-w-[120px]">
+                            <p class="text-xs text-slate-500 uppercase font-medium">Total Cargos</p>
+                            <p id="totalCargos" class="text-lg font-bold text-slate-800 dark:text-white font-mono">$0.00
+                            </p>
+                        </div>
+                        <div class="text-right min-w-[120px]">
+                            <p class="text-xs text-slate-500 uppercase font-medium">Total Abonos</p>
+                            <p id="totalAbonos" class="text-lg font-bold text-slate-800 dark:text-white font-mono">$0.00
+                            </p>
+                        </div>
+                        <div class="text-right min-w-[140px] pl-4 border-l border-slate-200 dark:border-slate-700">
+                            <p class="text-xs text-slate-500 uppercase font-medium">Diferencia</p>
+                            <p id="totalDiferencia"
+                                class="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Control y Comentarios -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+
+                <!-- Comentarios (Editable) -->
+                <div
+                    class="lg:col-span-3 bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/5 shadow-sm h-full">
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
+                            </path>
+                        </svg>
+                        <h3 class="text-sm font-semibold text-slate-800 dark:text-white">Comentarios Internos</h3>
+                    </div>
+                    <textarea name="comentarios" rows="4"
+                        class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all resize-none placeholder:text-slate-400"
+                        placeholder="Escribe aquí notas para auditoría, justificación de la póliza o aclaraciones..."></textarea>
+                </div>
+
+                <!-- Panel de Control y Auditoría (Read Only / System) -->
+                <div
+                    class="lg:col-span-1 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/5 shadow-inner space-y-5">
+                    <div class="flex items-center gap-2 mb-1">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            Control del Sistema</h3>
+                    </div>
+
+                    <!-- Estatus -->
+                    <div class="space-y-1">
+                        <p class="text-[10px] uppercase font-bold text-slate-400">Estatus Actual</p>
+                        <div id="controlStatusBadge"
+                            class="inline-flex items-center px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold">
+                            CAPTURADA
+                        </div>
+                    </div>
+
+                    <!-- Captura -->
+                    <div class="space-y-1 relative pl-3 border-l-2 border-slate-200 dark:border-slate-700">
+                        <p class="text-[10px] uppercase font-bold text-slate-400">Capturado por</p>
+                        <p class="text-xs font-medium text-slate-700 dark:text-slate-200">Admin (Tú)</p>
+                        <p id="fechaCapturaControl" class="text-[10px] text-slate-500 font-mono mt-0.5">--/--/---- --:--
+                        </p>
+                    </div>
+
+                    <!-- Aplicación -->
+                    <div class="space-y-1 relative pl-3 border-l-2 border-transparent" id="auditApplyContainer">
+                        <p class="text-[10px] uppercase font-bold text-slate-400">Aplicado por</p>
+                        <p id="usuarioAplica" class="text-xs font-medium text-slate-400 italic">Pendiente...</p>
+                        <p id="fechaAplica" class="text-[10px] text-slate-500 font-mono mt-0.5 opacity-0">--</p>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="pt-2">
+                        <button type="button" id="btnApplyPolicy"
+                            class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-500/20 transition-all opacity-50 cursor-not-allowed"
+                            disabled>
+                            APLICAR PÓLIZA
+                        </button>
+                        <p class="text-[10px] text-center text-slate-400 mt-2">Requiere balance en $0.00</p>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. Init Dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaInput').value = today;
+            document.getElementById('fechaContableInput').value = today;
+            
+            const now = new Date();
+            const displayDate = now.toLocaleDateString('es-MX') + ' ' + now.toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('fechaCapturaControl').textContent = displayDate;
+
+            // 2. Dynamic Table Logic
+            const entriesBody = document.getElementById('entriesBody');
+            const btnAddRow = document.getElementById('btnAddRow');
+            const rowCountDisplay = document.getElementById('rowCountDisplay');
+            
+            const totalCargosEl = document.getElementById('totalCargos');
+            const totalAbonosEl = document.getElementById('totalAbonos');
+            const totalDiferenciaEl = document.getElementById('totalDiferencia');
+            
+            const btnApplyPolicy = document.getElementById('btnApplyPolicy');
+            const statusBadge = document.getElementById('statusBadge');
+            const controlStatusBadge = document.getElementById('controlStatusBadge');
+            const usuarioAplica = document.getElementById('usuarioAplica');
+            const fechaAplica = document.getElementById('fechaAplica');
+            const auditApplyContainer = document.getElementById('auditApplyContainer');
+
+            let rowCount = 0;
+
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
+            }
+
+            function updateTotals() {
+                let sumCargos = 0;
+                let sumAbonos = 0;
+
+                document.querySelectorAll('.input-cargo').forEach(input => {
+                    sumCargos += parseFloat(input.value) || 0;
+                });
+                document.querySelectorAll('.input-abono').forEach(input => {
+                    sumAbonos += parseFloat(input.value) || 0;
+                });
+
+                const diff = sumCargos - sumAbonos;
+
+                totalCargosEl.textContent = formatCurrency(sumCargos);
+                totalAbonosEl.textContent = formatCurrency(sumAbonos);
+                totalDiferenciaEl.textContent = formatCurrency(diff);
+
+                // Validation Style & Apply Button State
+                if (Math.abs(diff) < 0.01 && (sumCargos > 0 || sumAbonos > 0)) {
+                    totalDiferenciaEl.className = 'text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono';
+                    // Enable Apply Button
+                    btnApplyPolicy.disabled = false;
+                    btnApplyPolicy.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-400');
+                    btnApplyPolicy.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'shadow-md');
+                } else {
+                    totalDiferenciaEl.className = 'text-lg font-bold text-rose-600 dark:text-rose-400 font-mono';
+                    // Disable Apply Button
+                    btnApplyPolicy.disabled = true;
+                    btnApplyPolicy.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+
+                rowCountDisplay.textContent = `${document.querySelectorAll('tr.entry-row').length} partidas`;
+            }
+
+            function addRow() {
+                rowCount++;
+                const tr = document.createElement('tr');
+                tr.className = 'entry-row group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors';
+                
+                tr.innerHTML = `
+                    <td class="p-2 text-center text-xs text-slate-400 select-none">${rowCount}</td>
+                    <td class="p-1">
+                        <input type="text" class="table-input font-mono text-xs" placeholder="100-00-000">
+                    </td>
+                    <td class="p-1">
+                        <input type="text" class="table-input" placeholder="Descripción de la cuenta">
+                    </td>
+                    <td class="p-1">
+                        <input type="number" step="0.01" class="table-input text-right input-cargo font-mono" placeholder="0.00">
+                    </td>
+                    <td class="p-1">
+                        <input type="number" step="0.01" class="table-input text-right input-abono font-mono" placeholder="0.00">
+                    </td>
+                    <td class="p-1">
+                        <input type="text" class="table-input text-center" placeholder="CC">
+                    </td>
+                    <td class="p-1">
+                        <input type="text" class="table-input" placeholder="Ref">
+                    </td>
+                    <td class="p-1">
+                        <input type="text" class="table-input text-xs" placeholder="UUID/Doc">
+                    </td>
+                    <td class="p-2 text-center">
+                        <button type="button" class="btn-delete-row text-slate-400 hover:text-rose-500 transition-colors p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </td>
+                `;
+
+                // Add Listeners to new inputs
+                tr.querySelectorAll('input[type="number"]').forEach(input => {
+                    input.addEventListener('input', updateTotals);
+                });
+
+                tr.querySelector('.btn-delete-row').addEventListener('click', () => {
+                    tr.remove();
+                    updateTotals();
+                });
+
+                entriesBody.appendChild(tr);
+                updateTotals();
+            }
+
+            btnAddRow.addEventListener('click', addRow);
+
+            // Add initial rows
+            addRow();
+            addRow();
+            addRow();
+
+            // 3. Save Logic
+            const btnSaveTop = document.getElementById('btnSaveTop');
+            const toast = document.getElementById('toast');
+            
+            function showToast(title, msg) {
+                const h4 = toast.querySelector('h4');
+                const p = toast.querySelector('p');
+                if(title) h4.textContent = title;
+                if(msg) p.textContent = msg;
+                
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full', 'opacity-0');
+                }, 3000);
+            }
+
+            btnSaveTop.addEventListener('click', () => {
+                showToast('Póliza Guardada', 'El asiento contable se registró correctamente.');
+            });
+
+            // 4. Apply Logic
+            btnApplyPolicy.addEventListener('click', () => {
+                // Change UI to Applied
+                statusBadge.textContent = 'Aplicada';
+                statusBadge.className = 'px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30';
+                
+                controlStatusBadge.textContent = 'APLICADA';
+                controlStatusBadge.className = 'inline-flex items-center px-3 py-1 rounded-lg bg-indigo-600 text-white text-xs font-bold shadow-sm';
+                
+                usuarioAplica.textContent = 'Admin (Supervisor)';
+                usuarioAplica.className = 'text-xs font-medium text-slate-700 dark:text-slate-200';
+                
+                const nowApply = new Date();
+                fechaAplica.textContent = nowApply.toLocaleDateString('es-MX') + ' ' + nowApply.toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'});
+                fechaAplica.classList.remove('opacity-0');
+                
+                auditApplyContainer.classList.remove('border-transparent');
+                auditApplyContainer.classList.add('border-indigo-500');
+
+                // Disable form inputs
+                document.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+                btnApplyPolicy.textContent = 'PÓLIZA APLICADA';
+                btnApplyPolicy.disabled = true;
+                btnAddRow.style.display = 'none';
+                document.querySelectorAll('.btn-delete-row').forEach(btn => btn.style.display = 'none');
+
+                showToast('Póliza Aplicada', 'Los saldos han sido afectados correctamente.');
+            });
+
+        });
+    </script>
+</body>
+
+</html>

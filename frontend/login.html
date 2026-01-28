@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme auto -->
+    <script>
+        (function () {
+            const root = document.documentElement;
+
+            function applySystemTheme() {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) {
+                    root.classList.add('dark');
+                    root.setAttribute('data-bs-theme', 'dark');
+                } else {
+                    root.classList.remove('dark');
+                    root.setAttribute('data-bs-theme', 'light');
+                }
+            }
+
+            applySystemTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+        })();
+    </script>
+
+    <!-- Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    transitionProperty: {
+                        'width': 'width'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-black min-h-screen flex items-center justify-center transition-colors duration-300 relative selection:bg-sky-500 selection:text-white">
+
+    <!-- Background Gradients -->
+    <div class="pointer-events-none fixed inset-0 z-0
+              bg-[radial-gradient(110%_70%_at_50%_-10%,rgba(56,189,248,0.28),rgba(255,255,255,0))]
+              dark:bg-[radial-gradient(120%_85%_at_50%_-20%,rgba(56,189,248,0.22),rgba(17,17,19,0))]">
+    </div>
+
+    <div
+        class="relative z-10 flex h-[700px] w-full max-w-[1200px] bg-white/80 dark:bg-black/60 backdrop-blur-2xl border border-slate-200 dark:border-white/5 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300">
+        <div class="w-full hidden md:inline-block">
+            <img class="h-full w-full object-cover"
+                src="https://images.unsplash.com/photo-1616156027751-fc9a850fdc9b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="leftSideImage">
+        </div>
+
+        <div class="w-full flex flex-col items-center justify-center p-8">
+
+            <form class="md:w-96 w-80 flex flex-col items-center justify-center">
+                <h2 class="text-4xl text-slate-900 dark:text-white font-medium transition-colors brand-font">Iniciar
+                    sesión</h2>
+                <p class="text-sm text-slate-500/90 dark:text-slate-400 mt-3 transition-colors">¡Bienvenido de nuevo!
+                    Por favor, inicia sesión para continuar
+                </p>
+
+                <button type="button"
+                    class="w-full mt-8 bg-slate-500/10 dark:bg-white/5 flex items-center justify-center h-12 rounded-full hover:bg-slate-500/20 dark:hover:bg-white/10 transition-colors border border-transparent dark:border-white/5">
+                    <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/googleLogo.svg"
+                        alt="googleLogo">
+                </button>
+
+                <div class="flex items-center gap-4 w-full my-5">
+                    <div class="w-full h-px bg-slate-300/90 dark:bg-white/10 transition-colors"></div>
+                    <p class="w-full text-nowrap text-sm text-slate-500/90 dark:text-slate-500 transition-colors">o
+                        inicia sesión con tu correo</p>
+                    <div class="w-full h-px bg-slate-300/90 dark:bg-white/10 transition-colors"></div>
+                </div>
+
+                <div
+                    class="flex items-center w-full bg-transparent border border-slate-300/60 dark:border-white/10 h-12 rounded-full overflow-hidden pl-6 gap-2 focus-within:border-sky-500 dark:focus-within:border-sky-500 transition-colors">
+                    <svg width="16" height="11" viewBox="0 0 16 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M0 .55.571 0H15.43l.57.55v9.9l-.571.55H.57L0 10.45zm1.143 1.138V9.9h13.714V1.69l-6.503 4.8h-.697zM13.749 1.1H2.25L8 5.356z"
+                            class="fill-slate-500 dark:fill-slate-400 transition-colors" />
+                    </svg>
+                    <input type="email" placeholder="Correo electrónico"
+                        class="bg-transparent text-slate-500/80 dark:text-slate-200 placeholder-slate-500/80 dark:placeholder-slate-500 outline-none text-sm w-full h-full transition-colors"
+                        required>
+                </div>
+
+                <div
+                    class="flex items-center mt-6 w-full bg-transparent border border-slate-300/60 dark:border-white/10 h-12 rounded-full overflow-hidden pl-6 gap-2 focus-within:border-sky-500 dark:focus-within:border-sky-500 transition-colors">
+                    <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M13 8.5c0-.938-.729-1.7-1.625-1.7h-.812V4.25C10.563 1.907 8.74 0 6.5 0S2.438 1.907 2.438 4.25V6.8h-.813C.729 6.8 0 7.562 0 8.5v6.8c0 .938.729 1.7 1.625 1.7h9.75c.896 0 1.625-.762 1.625-1.7zM4.063 4.25c0-1.406 1.093-2.55 2.437-2.55s2.438 1.144 2.438 2.55V6.8H4.061z"
+                            class="fill-slate-500 dark:fill-slate-400 transition-colors" />
+                    </svg>
+                    <input type="password" placeholder="Contraseña"
+                        class="bg-transparent text-slate-500/80 dark:text-slate-200 placeholder-slate-500/80 dark:placeholder-slate-500 outline-none text-sm w-full h-full transition-colors"
+                        required>
+                </div>
+
+                <div
+                    class="w-full flex items-center justify-between mt-8 text-slate-500/80 dark:text-slate-400 transition-colors">
+                    <div class="flex items-center gap-2">
+                        <input
+                            class="h-5 w-5 text-sky-500 focus:ring-sky-400 border-slate-300 dark:border-white/10 rounded bg-transparent"
+                            type="checkbox" id="checkbox">
+                        <label class="text-sm" for="checkbox">Recuérdame</label>
+                    </div>
+                    <a class="text-sm underline hover:text-sky-500" href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit"
+                    class="mt-8 w-full h-11 rounded-full text-white bg-sky-500 hover:opacity-90 transition-opacity font-medium shadow-lg shadow-sky-500/30">
+                    Iniciar sesión
+                </button>
+                <p class="text-slate-500/90 dark:text-slate-400 text-sm mt-4 transition-colors">¿No tienes una cuenta?
+                    <a class="text-sky-400 hover:underline" href="#">Regístrate</a></p>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

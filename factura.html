@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ventas - Facturación</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme auto -->
+    <script>
+        (function () {
+            const root = document.documentElement;
+
+            function applySystemTheme() {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) {
+                    root.classList.add('dark');
+                    root.setAttribute('data-bs-theme', 'dark');
+                } else {
+                    root.classList.remove('dark');
+                    root.setAttribute('data-bs-theme', 'light');
+                }
+            }
+
+            applySystemTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+        })();
+    </script>
+
+    <!-- Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand-font {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569; 
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+
+        /* Table Inputs */
+        .table-input {
+            @apply w-full bg-transparent border-none focus:ring-0 p-1 text-sm text-slate-700 dark:text-slate-200;
+        }
+        .table-input:focus {
+            @apply bg-indigo-50 dark:bg-indigo-900/20 rounded;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        indigo: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-slate-50 dark:bg-black text-slate-900 dark:text-white min-h-screen selection:bg-indigo-500 selection:text-white pb-32">
+
+    <!-- Background Gradients -->
+    <div class="pointer-events-none fixed inset-0 z-0
+              bg-[radial-gradient(110%_70%_at_50%_-10%,rgba(99,102,241,0.15),rgba(255,255,255,0))]
+              dark:bg-[radial-gradient(120%_85%_at_50%_-20%,rgba(99,102,241,0.1),rgba(17,17,19,0))]">
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/70 dark:bg-black/70 border-b border-slate-200 dark:border-white/10">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <a href="core.html" class="flex items-center gap-2 group">
+                        <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Volver</span>
+                    </a>
+                    <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-2"></div>
+                    <h1 class="text-lg font-bold text-slate-900 dark:text-white brand-font tracking-tight">
+                        Facturación
+                    </h1>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center gap-2 text-sm font-medium">
+                        <span class="text-slate-400">Estatus:</span>
+                        <span class="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Borrador</span>
+                    </div>
+                    <button type="button" id="btnSaveTop" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-5 py-2 shadow-lg shadow-indigo-500/20 transition-all transform hover:-translate-y-0.5">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                        </svg>
+                        Guardar Factura
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed top-20 right-5 z-50 transform transition-all duration-300 translate-x-full opacity-0">
+            <div class="bg-white dark:bg-zinc-900 border border-emerald-200 dark:border-emerald-500/30 rounded-2xl shadow-2xl p-4 flex items-center gap-3 max-w-sm">
+                <div class="shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Factura Guardada</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">El documento ha sido registrado exitosamente.</p>
+                </div>
+            </div>
+        </div>
+
+        <form id="invoiceForm" class="space-y-6">
+            
+            <!-- 1. Encabezado de la Factura -->
+            <div class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/5 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                            <span class="font-bold text-lg">1</span>
+                        </div>
+                        <h2 class="text-lg font-semibold text-slate-800 dark:text-white">Encabezado de la Factura</h2>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300 group-hover:text-indigo-600 transition-colors">Factura Inicial</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" checked>
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300 group-hover:text-indigo-600 transition-colors">Generar CFDI</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-5">
+                    
+                    <!-- Document Info -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipo Documento</label>
+                        <select class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20">
+                            <option value="factura">Factura</option>
+                            <option value="ticket">Ticket</option>
+                            <option value="nota">Nota de Venta</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Número Factura</label>
+                        <input type="text" value="F-2024-001" readonly class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-slate-500 dark:text-slate-400 outline-none cursor-not-allowed">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Doc. Origen</label>
+                        <input type="text" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pedido Relacionado</label>
+                        <input type="text" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pedido Cliente</label>
+                        <input type="text" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20">
+                    </div>
+                    
+                    <!-- References -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ref. General</label>
+                        <input type="text" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20">
+                    </div>
+                    
+                    <!-- Customer -->
+                    <div class="md:col-span-2 xl:col-span-2 space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cliente</label>
+                        <div class="relative">
+                            <input type="text" placeholder="Buscar cliente..." class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 xl:col-span-2 space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nombre del Cliente</label>
+                        <input type="text" readonly class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-500 dark:text-slate-400 outline-none">
+                    </div>
+                    
+                    <!-- Sales Info -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Agente / Vendedor</label>
+                        <select class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                            <option value="">Seleccionar...</option>
+                            <option value="agente1">Agente 01</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">% Comisión</label>
+                        <input type="number" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-right outline-none" placeholder="0.00">
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fecha Factura</label>
+                        <input type="date" id="fechaFactura" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fecha Vencimiento</label>
+                        <input type="date" id="fechaVencimiento" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fecha Pago</label>
+                        <input type="date" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                    </div>
+
+                    <!-- Logistics -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sucursal</label>
+                        <select class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                            <option value="matriz">Matriz</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Almacén</label>
+                        <select class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                            <option value="general">General</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ruta</label>
+                        <select class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                            <option value="local">Local</option>
+                        </select>
+                    </div>
+
+                    <!-- Currency & Status -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Moneda</label>
+                        <select class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none">
+                            <option value="MXN">MXN</option>
+                            <option value="USD">USD</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipo Cambio</label>
+                        <input type="number" value="1.0000" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-right outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estatus</label>
+                        <input type="text" value="Capturada" readonly class="w-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl px-3 py-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Anticipo Aplicado</label>
+                        <input type="number" value="0.00" class="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm text-right font-medium text-indigo-600 dark:text-indigo-400 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Detalle del Producto -->
+            <div class="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/5 shadow-sm flex flex-col h-[500px]">
+                <div class="flex items-center justify-between mb-4 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
+                            <span class="font-bold text-lg">2</span>
+                        </div>
+                        <h2 class="text-lg font-semibold text-slate-800 dark:text-white">Detalle de Productos</h2>
+                    </div>
+                    <button type="button" id="btnAddRow" class="inline-flex items-center px-3 py-1.5 bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-sky-100 dark:hover:bg-sky-500/20 transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Agregar Producto
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-auto -mx-6 px-6 pb-2 border-b border-slate-200 dark:border-slate-800 relative">
+                    <table class="w-full min-w-[1500px] border-collapse text-left">
+                        <thead class="sticky top-0 z-10 bg-slate-50/95 dark:bg-zinc-900/95 backdrop-blur shadow-sm">
+                            <tr>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-10 text-center">#</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Código</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[200px]">Descripción</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24 text-right">Cant.</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-20 text-center">UM</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32 text-right">Precio</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24 text-right">Desc %</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32 text-right">Importe</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24 text-center">Suc.</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24 text-center">Alm.</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24 text-right">Disp.</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Cód. SAT</th>
+                                <th class="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsBody" class="divide-y divide-slate-100 dark:divide-white/5">
+                            <!-- JS Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer Grid: 3. Totales Cantidades & 4. Control Sistema -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- 3. Totales y Cantidades -->
+                <div class="lg:col-span-1 bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/5 shadow-sm">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                            <span class="font-bold text-lg">3</span>
+                        </div>
+                        <h2 class="text-lg font-semibold text-slate-800 dark:text-white">Totales y Cantidades</h2>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                            <p class="text-xs text-slate-400 uppercase font-bold mb-1">Total Cantidad</p>
+                            <p id="totalQty" class="text-xl font-bold text-slate-800 dark:text-white">0.00</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                            <p class="text-xs text-slate-400 uppercase font-bold mb-1">Total Piezas</p>
+                            <p id="totalPieces" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                            <p class="text-xs text-slate-400 uppercase font-bold mb-1">Volumen</p>
+                            <p id="totalVolume" class="text-xl font-bold text-slate-800 dark:text-white">0.00 m³</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                            <p class="text-xs text-slate-400 uppercase font-bold mb-1">Peso</p>
+                            <p id="totalWeight" class="text-xl font-bold text-slate-800 dark:text-white">0.00 kg</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Control y Sistema (Financials) -->
+                <div class="lg:col-span-2 bg-slate-900 text-white rounded-3xl p-6 shadow-xl shadow-slate-900/20 relative overflow-hidden">
+                    <!-- Deco element -->
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                    
+                    <div class="flex items-center gap-3 mb-6 relative z-10">
+                        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
+                            <span class="font-bold text-lg">4</span>
+                        </div>
+                        <h2 class="text-lg font-semibold">Control y Sistema</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 relative z-10">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span class="text-sm font-medium">Subtotal</span>
+                                <span id="summarySubtotal" class="text-lg font-mono text-white">$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span class="text-sm font-medium">Descuentos</span>
+                                <span id="summaryDiscount" class="text-lg font-mono text-white text-rose-400">-$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span class="text-sm font-medium">IEPS</span>
+                                <span id="summaryIEPS" class="text-lg font-mono text-white">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span class="text-sm font-medium">IVA (16%)</span>
+                                <span id="summaryIVA" class="text-lg font-mono text-white">$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span class="text-sm font-medium">Retención IVA</span>
+                                <span id="summaryRetIVA" class="text-lg font-mono text-white text-rose-400">-$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span class="text-sm font-medium">Retención ISR</span>
+                                <span id="summaryRetISR" class="text-lg font-mono text-white text-rose-400">-$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-end gap-4 relative z-10">
+                        <div class="text-slate-400 text-sm">
+                            <p>Saldo pendiente</p>
+                            <p id="summaryBalance" class="text-white font-bold text-lg">$0.00</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-indigo-300 font-bold uppercase tracking-wider mb-1">Gran Total</p>
+                            <p id="summaryGrandTotal" class="text-4xl font-bold font-mono tracking-tight">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Init Dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaFactura').value = today;
+            document.getElementById('fechaVencimiento').value = today;
+
+            // 2. Table & Calculation Logic
+            const productsBody = document.getElementById('productsBody');
+            const btnAddRow = document.getElementById('btnAddRow');
+            
+            // Summary Elements
+            const els = {
+                subtotal: document.getElementById('summarySubtotal'),
+                discount: document.getElementById('summaryDiscount'),
+                ieps: document.getElementById('summaryIEPS'),
+                iva: document.getElementById('summaryIVA'),
+                retIva: document.getElementById('summaryRetIVA'),
+                retIsr: document.getElementById('summaryRetISR'),
+                grandTotal: document.getElementById('summaryGrandTotal'),
+                balance: document.getElementById('summaryBalance'),
+                totalQty: document.getElementById('totalQty'),
+                totalPieces: document.getElementById('totalPieces')
+            };
+
+            let rowCount = 0;
+
+            function formatCurrency(val) {
+                return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
+            }
+
+            function calculateTotals() {
+                let subtotal = 0;
+                let totalQty = 0;
+                let totalDisc = 0;
+
+                document.querySelectorAll('.row-calc').forEach(row => {
+                    const qty = parseFloat(row.querySelector('.in-qty').value) || 0;
+                    const price = parseFloat(row.querySelector('.in-price').value) || 0;
+                    const discPct = parseFloat(row.querySelector('.in-disc').value) || 0;
+                    
+                    const grossAmount = qty * price;
+                    const discountAmount = grossAmount * (discPct / 100);
+                    const netAmount = grossAmount - discountAmount;
+
+                    row.querySelector('.out-amount').value = netAmount.toFixed(2);
+                    
+                    subtotal += netAmount;
+                    totalQty += qty;
+                    totalDisc += discountAmount;
+                });
+
+                // Simple Tax Logic (Configurable in real app)
+                const ivaRate = 0.16;
+                const iva = subtotal * ivaRate;
+                const ieps = 0; // Placeholder
+                const retIva = 0; // Placeholder
+                const retIsr = 0; // Placeholder
+
+                const grandTotal = subtotal + iva + ieps - retIva - retIsr;
+
+                // Update DOM
+                els.subtotal.textContent = formatCurrency(subtotal);
+                els.discount.textContent = '-' + formatCurrency(totalDisc);
+                els.ieps.textContent = formatCurrency(ieps);
+                els.iva.textContent = formatCurrency(iva);
+                els.retIva.textContent = '-' + formatCurrency(retIva);
+                els.retIsr.textContent = '-' + formatCurrency(retIsr);
+                els.grandTotal.textContent = formatCurrency(grandTotal);
+                els.balance.textContent = formatCurrency(grandTotal); // Assuming no payments yet
+                
+                els.totalQty.textContent = totalQty.toFixed(2);
+                els.totalPieces.textContent = totalQty.toFixed(0); // Simplification
+            }
+
+            function addRow() {
+                rowCount++;
+                const tr = document.createElement('tr');
+                tr.className = 'row-calc group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-2 text-center text-xs text-slate-400 select-none">${rowCount}</td>
+                    <td class="p-1"><input type="text" class="table-input font-mono" placeholder="SKU"></td>
+                    <td class="p-1"><input type="text" class="table-input" placeholder="Nombre del producto"></td>
+                    <td class="p-1"><input type="number" class="table-input text-right in-qty" placeholder="0" value="1"></td>
+                    <td class="p-1"><input type="text" class="table-input text-center" placeholder="PZA" value="PZA"></td>
+                    <td class="p-1"><input type="number" class="table-input text-right in-price" placeholder="0.00"></td>
+                    <td class="p-1"><input type="number" class="table-input text-right in-disc" placeholder="0" value="0"></td>
+                    <td class="p-1"><input type="text" readonly class="table-input text-right font-bold text-slate-700 dark:text-white out-amount" placeholder="0.00"></td>
+                    <td class="p-1"><input type="text" class="table-input text-center text-xs" value="Matriz"></td>
+                    <td class="p-1"><input type="text" class="table-input text-center text-xs" value="Gral"></td>
+                    <td class="p-1"><input type="text" readonly class="table-input text-right text-xs text-emerald-500" value="100"></td>
+                    <td class="p-1"><input type="text" class="table-input text-xs" placeholder="84111506"></td>
+                    <td class="p-2 text-center">
+                        <button type="button" class="btn-delete text-slate-400 hover:text-rose-500 p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </td>
+                `;
+
+                // Events
+                tr.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', calculateTotals);
+                });
+                tr.querySelector('.btn-delete').addEventListener('click', () => {
+                    tr.remove();
+                    calculateTotals();
+                });
+
+                productsBody.appendChild(tr);
+            }
+
+            btnAddRow.addEventListener('click', () => {
+                addRow();
+                calculateTotals();
+            });
+
+            // Initial Row
+            addRow();
+
+            // Toast
+            const btnSave = document.getElementById('btnSaveTop');
+            const toast = document.getElementById('toast');
+            btnSave.addEventListener('click', () => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.classList.add('translate-x-full', 'opacity-0'), 3000);
+            });
+        });
+    </script>
+</body>
+</html>

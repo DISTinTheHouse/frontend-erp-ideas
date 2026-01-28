@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nuevo Cliente</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9', // Sky 500
+                            600: '#0284c7', // Sky 600
+                            700: '#0369a1', // Sky 700
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(14, 165, 233, 0.3)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Modern Input Styles */
+        .modern-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .modern-input {
+            @apply w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-700 dark:text-slate-200 placeholder-transparent focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-300 outline-none peer;
+        }
+
+        .modern-select {
+            @apply w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-300 outline-none appearance-none cursor-pointer;
+        }
+
+        .modern-label {
+            @apply absolute left-4 top-3 text-slate-400 text-sm transition-all duration-300 pointer-events-none peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-brand-600 peer-focus:bg-white dark:peer-focus:bg-zinc-900 peer-focus:px-2 -top-2.5 text-xs bg-white dark:bg-zinc-900 px-2;
+        }
+
+        /* Section Styling */
+        .form-section {
+            @apply bg-white dark:bg-zinc-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-white/5 mb-6 transition-all duration-300 hover:shadow-soft;
+        }
+
+        .section-title {
+            @apply text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-white/5;
+        }
+
+        .icon-box {
+            @apply w-10 h-10 rounded-lg flex items-center justify-center bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400;
+        }
+    </style>
+
+    <script>
+            // Theme Management
+            (function () {
+                const root = document.documentElement;
+                function applySystemTheme() {
+                    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (isDark) {
+                        root.classList.add('dark');
+                        root.setAttribute('data-bs-theme', 'dark');
+                    } else {
+                        root.classList.remove('dark');
+                        root.setAttribute('data-bs-theme', 'light');
+                    }
+                }
+                applySystemTheme();
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+            })();
+    </script>
+</head>
+
+<body class="bg-slate-50/50 dark:bg-[#0a0a0a] min-h-screen pb-24 transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav
+        class="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/10">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <a href="core.html"
+                        class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </a>
+                    <h1 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Nuevo Cliente</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Limpiar
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-brand-600 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 dark:hover:bg-brand-500 shadow-lg shadow-slate-900/20 dark:shadow-brand-500/20 transition-all transform active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Guardar Cliente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+
+        <!-- Header Info -->
+        <div class="mb-8 text-center sm:text-left">
+            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 font-display">Alta de Nuevo Cliente</h2>
+            <p class="text-slate-500 dark:text-slate-400">Complete la información para registrar un nuevo socio
+                comercial en el sistema.</p>
+        </div>
+
+        <form onsubmit="event.preventDefault();" class="space-y-6">
+
+            <!-- 1. Identificación y Fiscal -->
+            <div class="form-section animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="section-title">
+                    <div class="icon-box">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                        </svg>
+                    </div>
+                    <span>Datos de Identificación</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                    <div class="md:col-span-3 modern-group">
+                        <input type="text" id="cliente" class="modern-input" placeholder=" " />
+                        <label for="cliente" class="modern-label">ID Cliente</label>
+                    </div>
+                    <div class="md:col-span-9 modern-group">
+                        <input type="text" id="razonSocial" class="modern-input" placeholder=" " />
+                        <label for="razonSocial" class="modern-label">Razón Social / Nombre Completo</label>
+                    </div>
+
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="rfc" class="modern-input uppercase" placeholder=" " />
+                        <label for="rfc" class="modern-label">RFC</label>
+                    </div>
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="curp" class="modern-input uppercase" placeholder=" " />
+                        <label for="curp" class="modern-label">CURP</label>
+                    </div>
+                    <div class="md:col-span-4 modern-group">
+                        <div class="relative">
+                            <select id="regimen" class="modern-select">
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option>601 - General de Ley Personas Morales</option>
+                                <option>612 - Personas Físicas</option>
+                                <option>626 - RESICO</option>
+                            </select>
+                            <label
+                                class="absolute left-4 -top-2.5 text-xs bg-white dark:bg-zinc-900 px-2 text-brand-600 font-medium">Régimen
+                                Fiscal</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Ubicación -->
+            <div class="form-section animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="section-title">
+                    <div class="icon-box">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <span>Domicilio Fiscal</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                    <div class="md:col-span-6 modern-group">
+                        <input type="text" id="direccion" class="modern-input" placeholder=" " />
+                        <label for="direccion" class="modern-label">Calle / Dirección</label>
+                    </div>
+                    <div class="md:col-span-3 modern-group">
+                        <input type="text" id="numExt" class="modern-input" placeholder=" " />
+                        <label for="numExt" class="modern-label">No. Exterior</label>
+                    </div>
+                    <div class="md:col-span-3 modern-group">
+                        <input type="text" id="numInt" class="modern-input" placeholder=" " />
+                        <label for="numInt" class="modern-label">No. Interior</label>
+                    </div>
+
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="colonia" class="modern-input" placeholder=" " />
+                        <label for="colonia" class="modern-label">Colonia</label>
+                    </div>
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="cp" class="modern-input" placeholder=" " />
+                        <label for="cp" class="modern-label">Código Postal</label>
+                    </div>
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="delegacion" class="modern-input" placeholder=" " />
+                        <label for="delegacion" class="modern-label">Delegación / Municipio</label>
+                    </div>
+
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="ciudad" class="modern-input" placeholder=" " />
+                        <label for="ciudad" class="modern-label">Ciudad</label>
+                    </div>
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="estado" class="modern-input" placeholder=" " />
+                        <label for="estado" class="modern-label">Estado</label>
+                    </div>
+                    <div class="md:col-span-4 modern-group">
+                        <input type="text" id="pais" class="modern-input" value="México" placeholder=" " />
+                        <label for="pais" class="modern-label">País</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Contacto y Comercial -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Contacto -->
+                <div class="form-section mb-0 animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <span>Datos de Contacto</span>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div class="modern-group">
+                            <input type="text" id="contacto" class="modern-input" placeholder=" " />
+                            <label for="contacto" class="modern-label">Nombre del Contacto</label>
+                        </div>
+                        <div class="modern-group">
+                            <input type="email" id="email" class="modern-input" placeholder=" " />
+                            <label for="email" class="modern-label">Correo Electrónico</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="modern-group">
+                                <input type="tel" id="telefono1" class="modern-input" placeholder=" " />
+                                <label for="telefono1" class="modern-label">Teléfono Oficina</label>
+                            </div>
+                            <div class="modern-group">
+                                <input type="tel" id="celular" class="modern-input" placeholder=" " />
+                                <label for="celular" class="modern-label">Celular / WhatsApp</label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="modern-group">
+                                <input type="tel" id="telefono2" class="modern-input" placeholder=" " />
+                                <label for="telefono2" class="modern-label">Teléfono 2</label>
+                            </div>
+                            <div class="modern-group">
+                                <input type="url" id="web" class="modern-input" placeholder=" " />
+                                <label for="web" class="modern-label">Sitio Web</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comercial -->
+                <div class="form-section mb-0 animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <span>Configuración</span>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div class="modern-group">
+                            <div class="relative">
+                                <select id="sucursal" class="modern-select">
+                                    <option>Matriz</option>
+                                    <option>Sucursal Norte</option>
+                                    <option>Sucursal Sur</option>
+                                </select>
+                                <label
+                                    class="absolute left-4 -top-2.5 text-xs bg-white dark:bg-zinc-900 px-2 text-brand-600 font-medium">Sucursal
+                                    Asignada</label>
+                            </div>
+                        </div>
+
+                        <div
+                            class="p-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                            <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Resumen de Alta
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-4">El cliente se dará de alta con estatus "Activo" y se
+                                asignará a la lista de precios predeterminada.</p>
+                            <div
+                                class="flex items-center gap-2 text-xs text-brand-600 bg-brand-50 dark:bg-brand-500/10 p-2 rounded-lg">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Verifique que el RFC sea correcto para facturación.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+</body>
+
+</html>

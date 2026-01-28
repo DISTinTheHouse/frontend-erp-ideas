@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ventas - Pedido de Cliente</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6', // Violet 500
+                            600: '#7c3aed', // Violet 600
+                            700: '#6d28d9', // Violet 700
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(139, 92, 246, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Table Inputs */
+        .table-input {
+            @apply w-full bg-transparent border-none focus:ring-0 p-1 text-xs text-slate-700 dark:text-slate-200 text-right;
+        }
+
+        .table-input:focus {
+            @apply bg-brand-50 dark:bg-brand-500/20 rounded;
+        }
+
+        /* Input Focus Ring Animation */
+        .input-group:focus-within label {
+            color: #8b5cf6;
+        }
+    </style>
+
+    <!-- Theme Logic -->
+    <script>
+            (function () {
+                const root = document.documentElement;
+                function applySystemTheme() {
+                    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (isDark) {
+                        root.classList.add('dark');
+                        root.setAttribute('data-bs-theme', 'dark');
+                    } else {
+                        root.classList.remove('dark');
+                        root.setAttribute('data-bs-theme', 'light');
+                    }
+                }
+                applySystemTheme();
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+            })();
+    </script>
+</head>
+
+<body
+    class="bg-slate-50/80 dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 min-h-screen pb-32 transition-colors duration-300">
+
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-black/80 border-b border-slate-200/80 dark:border-white/10 supports-[backdrop-filter]:bg-white/60">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="core.html"
+                        class="group flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-500 hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-glow">
+                        <svg class="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white font-display tracking-tight">
+                            Pedido de Venta
+                        </h1>
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-2 w-2">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
+                            </span>
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Captura y Seguimiento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex flex-col items-end mr-2">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Estatus
+                            Actual</span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
+                            CAPTURADO
+                        </span>
+                    </div>
+                    <button type="button" id="btnSave"
+                        class="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 bg-slate-900 dark:bg-brand-600 rounded-xl hover:bg-slate-800 dark:hover:bg-brand-500 shadow-lg shadow-slate-900/20 dark:shadow-brand-500/20 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden">
+                        <span class="relative z-10 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                                </path>
+                            </svg>
+                            Guardar Pedido
+                        </span>
+                        <div
+                            class="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-white/10 transition-transform duration-300">
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed top-24 right-5 z-[60] transform transition-all duration-500 translate-x-[120%] opacity-0">
+        <div
+            class="bg-white dark:bg-zinc-800 border-l-4 border-brand-500 rounded-xl shadow-2xl shadow-brand-500/10 p-4 flex items-center gap-4 min-w-[320px] backdrop-blur-xl">
+            <div
+                class="shrink-0 w-12 h-12 rounded-full bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-brand-600 dark:text-brand-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white">Pedido Guardado</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">El documento ha sido registrado
+                    exitosamente.</p>
+            </div>
+            <button onclick="document.getElementById('toast').classList.add('translate-x-[120%]', 'opacity-0')"
+                class="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <main class="relative z-10 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- 1. Encabezado del Pedido -->
+        <section
+            class="relative overflow-hidden bg-white dark:bg-zinc-900 rounded-[2rem] p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none group hover:border-brand-200 dark:hover:border-brand-900 transition-colors duration-300">
+            <!-- Decorative Elements -->
+            <div
+                class="absolute top-0 right-0 w-96 h-96 bg-brand-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none">
+            </div>
+
+            <div class="flex flex-col xl:flex-row gap-8 items-start relative z-10">
+                <!-- Main ID Card -->
+                <div
+                    class="shrink-0 w-full xl:w-80 bg-slate-50 dark:bg-black/20 rounded-3xl p-6 border border-slate-100 dark:border-white/5">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Vendedor</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-900 dark:text-white font-mono mb-6">ID-VENDEDOR</div>
+
+                    <div class="space-y-4">
+                        <div class="input-group">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Tipo
+                                Documento</label>
+                            <select
+                                class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:border-brand-500 transition-colors">
+                                <option value="pedido">Pedido de Venta</option>
+                                <option value="muestra">Muestra</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Fecha</label>
+                            <input type="date" id="fechaPedido"
+                                class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500 transition-colors">
+                        </div>
+                        <div class="input-group">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-2 block">Origen</label>
+                            <div class="grid grid-cols-2 gap-y-2 gap-x-1">
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Recompra</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Google</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Chat
+                                        Online</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Publicidad</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Pedido
+                                        Online</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Mercado
+                                        Libre</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Prospección</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Redes
+                                        Sociales</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Recomendación</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Otro</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Amazon</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Mailing</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Form -->
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
+                    <div class="col-span-full">
+                        <h4
+                            class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            Datos de Facturación
+                        </h4>
+                    </div>
+                    <!-- Cliente Row -->
+                    <div class="md:col-span-2 lg:col-span-2 input-group">
+                        <div class="flex justify-between items-center mb-1">
+                            <label
+                                class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 block transition-colors">Cliente</label>
+                            <button type="button"
+                                class="group flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 transition-all duration-200">
+                                <div
+                                    class="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform">
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                            d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                </div>
+                                <span
+                                    class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Añadir
+                                    Nuevo Cliente</span>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <input type="text"
+                                class="w-full bg-transparent border-b-2 border-slate-200 dark:border-slate-800 focus:border-brand-500 dark:focus:border-brand-500 px-1 py-2 text-xl font-bold text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-700 outline-none transition-colors"
+                                placeholder="Buscar Cliente...">
+                            <svg class="w-5 h-5 text-slate-400 absolute right-0 top-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Nombre
+                            del Cliente</label>
+                        <input type="text"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            value="Distribuidora Ejemplo S.A. de C.V.">
+                    </div>
+
+                    <!-- Billing Data (Auto-populated) -->
+                    <div class="lg:col-span-2 input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Razón
+                            Social</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="DISTRIBUIDORA EJEMPLO S.A. DE C.V.">
+                    </div>
+                    <div class="input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">RFC</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="DEJ010101ABC">
+                    </div>
+                    <div class="input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Régimen
+                            Fiscal</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="601 - General de Ley">
+                    </div>
+
+                    <div class="lg:col-span-2 input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Dirección
+                            Fiscal</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="Av. Industrial #500">
+                    </div>
+                    <div class="input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Colonia</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="Parque Industrial">
+                    </div>
+                    <div class="input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">C.P.</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="64000">
+                    </div>
+
+                    <div class="input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Ciudad</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="Monterrey">
+                    </div>
+                    <div class="input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Estado</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="Nuevo León">
+                    </div>
+                    <div class="lg:col-span-2 input-group">
+                        <label
+                            class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Giro
+                            de la Empresa</label>
+                        <input type="text" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none"
+                            value="Comercialización de Productos">
+                    </div>
+
+                    <!-- Section Divider -->
+                    <div class="col-span-full my-4 border-t border-slate-100 dark:border-white/5"></div>
+
+                    <!-- Payment & Contact Info -->
+                    <div class="md:col-span-1 lg:col-span-2 space-y-4">
+                        <h4
+                            class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            Forma de Pago y Contacto para Envío de Facturas
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- Persona Pagos -->
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Persona
+                                    Pagos</label>
+                                <input type="text"
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <!-- Correo Facturas -->
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Correo
+                                    Facturas</label>
+                                <input type="email"
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <!-- Teléfono Pagos -->
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Teléfono
+                                    Pagos</label>
+                                <input type="tel"
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <!-- O.C. -->
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">O.C.</label>
+                                <input type="text"
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <!-- Forma de Pago -->
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Forma
+                                    de Pago</label>
+                                <select
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors">
+                                    <option value="03">03 - Transferencia</option>
+                                    <option value="01">01 - Efectivo</option>
+                                    <option value="02">02 - Cheque</option>
+                                    <option value="99">99 - Por definir</option>
+                                </select>
+                            </div>
+                            <!-- Método de Pago -->
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Método
+                                    de Pago</label>
+                                <select
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors">
+                                    <option value="PUE">PUE - Pago en una sola exhibición</option>
+                                    <option value="PPD">PPD - Pago en parcialidades</option>
+                                </select>
+                            </div>
+                            <!-- Uso de CFDI -->
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Uso
+                                    de CFDI</label>
+                                <select
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors">
+                                    <option value="G03">G03 - Gastos en general</option>
+                                    <option value="G01">G01 - Adquisición de mercancías</option>
+                                    <option value="P01">P01 - Por definir</option>
+                                </select>
+                            </div>
+                            <!-- Referenciar OC -->
+                            <div class="input-group flex items-end pb-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                    <span
+                                        class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Referenciar
+                                        OC en Factura</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Conditions -->
+                    <div class="md:col-span-1 lg:col-span-2 space-y-4">
+                        <h4
+                            class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            Condiciones de Pago
+                        </h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                <span
+                                    class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">100%
+                                    Anticipo</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                <span
+                                    class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">50%
+                                    Anticipo</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                <span
+                                    class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Vendedor
+                                    Autoriza</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                <span
+                                    class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Pago
+                                    antes de embarque</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                <span
+                                    class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Por
+                                    confirmar</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                                <span
+                                    class="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">Otra
+                                    Cantidad (Anticipo)</span>
+                            </label>
+                            <!-- Exception: Input for Amount -->
+                            <div class="col-span-2">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Especificar
+                                    Monto</label>
+                                <input type="text"
+                                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-brand-500 transition-colors"
+                                    placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Datos de Envío (Collapsible Section) -->
+        <section
+            class="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none p-6 md:p-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display font-semibold text-slate-900 dark:text-white text-lg">Datos de Envío</h3>
+                </div>
+
+                <!-- Top Checkboxes -->
+                <div class="flex flex-wrap gap-4">
+                    <label
+                        class="flex items-center gap-2 cursor-pointer bg-slate-50 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 hover:border-blue-500/50 transition-colors">
+                        <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                        <span
+                            class="text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Enviar
+                            al Domicilio Fiscal</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-2 cursor-pointer bg-slate-50 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 hover:border-blue-500/50 transition-colors">
+                        <input type="checkbox" class="accent-brand-500 w-3.5 h-3.5 rounded">
+                        <span
+                            class="text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Embarcar
+                            con otros pedidos</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- Row 1 -->
+                <div class="input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Destinatario</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Empresa</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Teléfono</label>
+                    <input type="tel"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Celular</label>
+                    <input type="tel"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+
+                <!-- Row 2 -->
+                <div class="md:col-span-2 input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Dirección</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Colonia</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="input-group">
+                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Código
+                        Postal</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono outline-none focus:border-blue-500 transition-colors">
+                </div>
+
+                <!-- Row 3 -->
+                <div class="input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Ciudad</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Estado</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="md:col-span-2 input-group">
+                    <label
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Referencias
+                        Adicionales</label>
+                    <input type="text"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+
+                <!-- Bottom Special Options -->
+                <div class="col-span-full border-t border-slate-100 dark:border-white/5 pt-5 mt-2 space-y-4">
+                    <!-- Empaque Ecológico -->
+                    <label
+                        class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-500/5 border border-emerald-100 dark:border-emerald-500/20 cursor-pointer group hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors">
+                        <input type="checkbox" class="mt-1 accent-emerald-500 w-4 h-4 rounded">
+                        <div>
+                            <span
+                                class="block text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide group-hover:text-emerald-800 dark:group-hover:text-emerald-300 transition-colors">Empaque
+                                Ecológico, Sin Bolsas de Plástico</span>
+                            <span class="text-[10px] font-medium text-emerald-600/70 dark:text-emerald-400/70">¡ Gracias
+                                por ayudarnos a cuidar el medio ambiente !</span>
+                        </div>
+                    </label>
+
+                    <!-- Embarque Parcial -->
+                    <div class="space-y-3">
+                        <label
+                            class="flex items-start gap-3 p-3 rounded-xl bg-amber-50/50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/20 cursor-pointer group hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors">
+                            <input type="checkbox" class="mt-1 accent-amber-500 w-4 h-4 rounded">
+                            <div>
+                                <span
+                                    class="block text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide group-hover:text-amber-800 dark:group-hover:text-amber-300 transition-colors">Embarque
+                                    Parcial</span>
+                                <span class="text-[10px] font-medium text-amber-600/70 dark:text-amber-400/70">Es
+                                    posible embarcar parcialidad facturada de lo disponible en inventario.</span>
+                            </div>
+                        </label>
+
+                        <!-- Comentarios Parcialidad -->
+                        <div class="input-group pl-10">
+                            <label
+                                class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Comentarios
+                                Parcialidad</label>
+                            <input type="text"
+                                class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-amber-500 transition-colors"
+                                placeholder="Especificaciones para el envío parcial...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. CABALLERO - SUPERIOR -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    CABALLERO <span class="text-slate-400 font-normal">| Camisas / Prendas Superiores</span>
+                </h2>
+                <button onclick="addRow('table-cab-sup')"
+                    class="text-xs font-semibold text-brand-600 hover:text-brand-500 dark:text-brand-400 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Agregar Renglón
+                </button>
+            </div>
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1200px]" id="table-cab-sup">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-10 text-center">
+                                Bordados</th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-32">Tipo
+                            </th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 min-w-[200px]">
+                                Descripción</th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Color
+                            </th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Código
+                            </th>
+                            <!-- Sizes -->
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                2XCH<br><span class="text-slate-400">(32)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                XCH<br><span class="text-slate-400">(34)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                CH<br><span class="text-slate-400">(36)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                M<br><span class="text-slate-400">(38)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                G<br><span class="text-slate-400">(40)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                XG<br><span class="text-slate-400">(42)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                2XG<br><span class="text-slate-400">(44/46)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                3XG<br><span class="text-slate-400">(48/50)</span></th>
+                            <!-- End Sizes -->
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24 text-right">
+                                Precio</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-20 text-center">
+                                Cant.</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-28 text-right">
+                                Total</th>
+                            <th class="p-3 w-10"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                        <!-- Rows generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2. CABALLERO - PANTALONES -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                    CABALLERO <span class="text-slate-400 font-normal">| Pantalones</span>
+                </h2>
+                <button onclick="addRow('table-cab-pan')"
+                    class="text-xs font-semibold text-brand-600 hover:text-brand-500 dark:text-brand-400 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Agregar Renglón
+                </button>
+            </div>
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1200px]" id="table-cab-pan">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-32">Bordados
+                            </th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 min-w-[200px]">
+                                Descripción</th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Color
+                            </th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Código
+                            </th>
+                            <!-- Sizes -->
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                28</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                30</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                32</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                34</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                36</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                38</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                40</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                42</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                44</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                46</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                48</th>
+                            <!-- End Sizes -->
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24 text-right">
+                                Precio</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-20 text-center">
+                                Cant.</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-28 text-right">
+                                Total</th>
+                            <th class="p-3 w-10"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-white/5"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. DAMA - SUPERIOR -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+                    DAMA <span class="text-slate-400 font-normal">| Prendas Superiores</span>
+                </h2>
+                <button onclick="addRow('table-dama-sup')"
+                    class="text-xs font-semibold text-brand-600 hover:text-brand-500 dark:text-brand-400 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Agregar Renglón
+                </button>
+            </div>
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1200px]" id="table-dama-sup">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-10 text-center">
+                                Bordados</th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-32">Bordados
+                            </th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 min-w-[200px]">
+                                Descripción</th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Color
+                            </th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Código
+                            </th>
+                            <!-- Sizes -->
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                2XCH<br><span class="text-slate-400">(24)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                XCH<br><span class="text-slate-400">(26)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                CH<br><span class="text-slate-400">(28)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                M<br><span class="text-slate-400">(30)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                G<br><span class="text-slate-400">(32)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                XG<br><span class="text-slate-400">(34)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                2XG<br><span class="text-slate-400">(36/38)</span></th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-14">
+                                3XG<br><span class="text-slate-400">(40/42)</span></th>
+                            <!-- End Sizes -->
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24 text-right">
+                                Precio</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-20 text-center">
+                                Cant.</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-28 text-right">
+                                Total</th>
+                            <th class="p-3 w-10"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-white/5"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. DAMA - IMPAR -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-pink-600"></span>
+                    DAMA <span class="text-slate-400 font-normal">| Prendas por Número Impar</span>
+                </h2>
+                <button onclick="addRow('table-dama-impar')"
+                    class="text-xs font-semibold text-brand-600 hover:text-brand-500 dark:text-brand-400 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Agregar Renglón
+                </button>
+            </div>
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1200px]" id="table-dama-impar">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-32">Bordados
+                            </th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 min-w-[200px]">
+                                Descripción</th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Color
+                            </th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Código
+                            </th>
+                            <!-- Sizes -->
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                3</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                5</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                7</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                9</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                11</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                13</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                15</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                17</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                19</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                21</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                23</th>
+                            <!-- End Sizes -->
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24 text-right">
+                                Precio</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-20 text-center">
+                                Cant.</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-28 text-right">
+                                Total</th>
+                            <th class="p-3 w-10"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-white/5"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 5. CALZADO -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    CALZADO
+                </h2>
+                <button onclick="addRow('table-calzado')"
+                    class="text-xs font-semibold text-brand-600 hover:text-brand-500 dark:text-brand-400 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Agregar Renglón
+                </button>
+            </div>
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1200px]" id="table-calzado">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-32">Tipo
+                            </th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 min-w-[200px]">
+                                Descripción</th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Color
+                            </th>
+                            <th class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24">Código
+                            </th>
+                            <!-- Sizes -->
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                22</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                23</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                24</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                25</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                26</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                27</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                28</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                29</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                30</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                31</th>
+                            <th
+                                class="p-2 text-[10px] font-bold uppercase text-center text-slate-600 dark:text-slate-300 w-12">
+                                32</th>
+                            <!-- End Sizes -->
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-24 text-right">
+                                Precio</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-20 text-center">
+                                Cant.</th>
+                            <th
+                                class="p-3 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 w-28 text-right">
+                                Total</th>
+                            <th class="p-3 w-10"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-white/5"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Bottom Grids: 3, 4, 5 -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+            <!-- 3. Totales y Asignaciones (Left) -->
+            <div class="xl:col-span-1 space-y-6">
+                <!-- Asignaciones Card -->
+                <div
+                    class="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none p-6">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Totales y Logística</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- <div class="p-3 bg-slate-50 dark:bg-black/20 rounded-xl">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Total Cantidad</p>
+                            <p class="text-lg font-bold text-slate-800 dark:text-white mt-1">10.00</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-black/20 rounded-xl">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Total Pedido</p>
+                            <p class="text-lg font-bold text-slate-800 dark:text-white mt-1">10.00</p>
+                        </div> -->
+                        <div
+                            class="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
+                            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase">Total
+                                Cantidad</p>
+                            <p class="text-lg font-bold text-emerald-700 dark:text-emerald-300 mt-1">10.00</p>
+                        </div>
+                        <div
+                            class="p-3 bg-rose-50 dark:bg-yellow-500/10 rounded-xl border border-rose-100 dark:border-yellow-500/20">
+                            <p class="text-[10px] text-rose-600 dark:text-yellow-400 font-bold uppercase">Total Pedido
+                            </p>
+                            <p class="text-lg font-bold text-yellow-700 dark:text-yellow-300 mt-1">10.00</p>
+                        </div>
+                    </div>
+
+                    <div class="h-px bg-slate-100 dark:bg-white/5 my-5"></div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Asignado Cantidad</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200">0.00</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Asignado %</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200">0%</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Asignado $</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200">$0.00</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <div
+                                class="text-center p-2 rounded-lg border border-dashed border-slate-300 dark:border-slate-700">
+                                <p class="text-[10px] text-slate-400 uppercase">Volumen</p>
+                                <p class="text-sm font-bold text-slate-600 dark:text-slate-300">0.00 m³</p>
+                            </div>
+                            <div
+                                class="text-center p-2 rounded-lg border border-dashed border-slate-300 dark:border-slate-700">
+                                <p class="text-[10px] text-slate-400 uppercase">Peso</p>
+                                <p class="text-sm font-bold text-slate-600 dark:text-slate-300">0.00 kg</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Control (Footer) -->
+                <div
+                    class="bg-slate-50 dark:bg-white/5 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-inner p-6">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Servicios Extras
+                    </h4>
+                    <div class="space-y-3 text-xs">
+
+                        <!-- Checkboxes Servicios Extras -->
+                        <div class="space-y-2 mb-4 border-b border-slate-200 dark:border-white/10 pb-4">
+                            <!-- Envío -->
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 extra-service-check"
+                                        onchange="updateGrandTotals()">
+                                    <span class="text-slate-600 dark:text-slate-300 font-medium">Envío</span>
+                                </label>
+                                <div class="relative w-24">
+                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                                    <input type="number" value="350.00"
+                                        class="w-full bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg pl-5 pr-2 py-1 text-right outline-none extra-service-price font-bold text-slate-700 dark:text-slate-200"
+                                        oninput="updateGrandTotals()">
+                                </div>
+                            </div>
+                            <!-- Programa de Bordados -->
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 extra-service-check"
+                                        onchange="updateGrandTotals()">
+                                    <span class="text-slate-600 dark:text-slate-300 font-medium">Programa de
+                                        Bordados</span>
+                                </label>
+                                <div class="relative w-24">
+                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                                    <input type="number" value="0.00"
+                                        class="w-full bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg pl-5 pr-2 py-1 text-right outline-none extra-service-price font-bold text-slate-700 dark:text-slate-200"
+                                        oninput="updateGrandTotals()">
+                                </div>
+                            </div>
+                            <!-- Bordado Pantalones Extras -->
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 extra-service-check"
+                                        onchange="updateGrandTotals()">
+                                    <span class="text-slate-600 dark:text-slate-300 font-medium">Bordado Pantalones
+                                        Extras</span>
+                                </label>
+                                <div class="relative w-24">
+                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                                    <input type="number" value="0.00"
+                                        class="w-full bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg pl-5 pr-2 py-1 text-right outline-none extra-service-price font-bold text-slate-700 dark:text-slate-200"
+                                        oninput="updateGrandTotals()">
+                                </div>
+                            </div>
+                            <!-- Bordado Logotipo (Incluido) -->
+                            <div class="flex items-center justify-between opacity-75">
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" checked disabled
+                                        class="rounded border-slate-300 text-slate-400 bg-slate-100 cursor-not-allowed">
+                                    <span class="text-slate-500 dark:text-slate-400 font-medium">Bordado Logotipo
+                                        (Incluido)</span>
+                                </label>
+                                <span
+                                    class="text-slate-400 text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded">Gratis</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="block text-slate-500 mb-1 font-bold">Documento Relacionado</label>
+                            <input type="text"
+                                class="w-full bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 outline-none">
+                        </div>
+                        <!-- <div class="input-group">
+                            <label class="block text-slate-500 mb-1 font-bold">Evento / Bitácora</label>
+                            <input type="text"
+                                class="w-full bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 outline-none">
+                        </div> -->
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-500">Usuario Captura:</span>
+                            <span class="font-medium text-slate-700 dark:text-slate-300">Jesús Ibarra Morales</span>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-500">Fecha Captura:</span>
+                            <span class="font-mono text-slate-700 dark:text-slate-300"
+                                id="fechaCaptura">--/--/----</span>
+                        </div>
+                        <div class="pt-2">
+                            <label class="block text-slate-500 mb-1 font-bold">Observaciones</label>
+                            <textarea rows="2"
+                                class="w-full bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 outline-none resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Importes e Impuestos (Right - Main Totals) -->
+            <div class="xl:col-span-2">
+                <div
+                    class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-[2rem] shadow-2xl shadow-slate-900/20 p-8 relative overflow-hidden h-full flex flex-col justify-between">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-brand-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2">
+                    </div>
+
+                    <!-- Breakdown -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 relative z-10 mb-8">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center text-slate-300 border-b border-white/5 pb-2">
+                                <span class="text-sm font-medium">Subtotal</span>
+                                <span class="text-lg font-mono tracking-wide text-white" id="lblSubtotal">$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center text-rose-300 border-b border-white/5 pb-2">
+                                <span class="text-sm font-medium">Descuentos</span>
+                                <span class="text-lg font-mono tracking-wide">-$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300 border-b border-white/5 pb-2">
+                                <span class="text-sm font-medium">IEPS</span>
+                                <span class="text-lg font-mono tracking-wide">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center text-slate-300 border-b border-white/5 pb-2">
+                                <span class="text-sm font-medium">IVA (16%)</span>
+                                <span class="text-lg font-mono tracking-wide" id="lblIva">$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300 border-b border-white/5 pb-2">
+                                <span class="text-sm font-medium">Flete</span>
+                                <input type="text" value="$0.00"
+                                    class="bg-transparent text-right w-32 font-mono text-lg outline-none border-b border-dashed border-slate-500 focus:border-brand-400 transition-colors">
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300 border-b border-white/5 pb-2">
+                                <span class="text-sm font-medium">Seguros</span>
+                                <input type="text" value="$0.00"
+                                    class="bg-transparent text-right w-32 font-mono text-lg outline-none border-b border-dashed border-slate-500 focus:border-brand-400 transition-colors">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grand Total -->
+                    <div class="relative z-10 pt-6 border-t border-white/10">
+                        <div class="flex flex-col md:flex-row justify-between items-end gap-6">
+                            <div class="w-full md:w-auto">
+                                <label class="text-xs font-bold text-brand-300 uppercase tracking-wider mb-2 block">A
+                                    Cuenta (Anticipo)</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-3 text-slate-400">$</span>
+                                    <input type="number" value="0.00"
+                                        class="w-full md:w-48 bg-white/10 border border-white/10 rounded-xl pl-7 pr-4 py-3 text-white font-bold outline-none focus:bg-white/20 transition-all">
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-slate-400 font-bold uppercase tracking-widest mb-1">Gran Total
+                                    Pedido</p>
+                                <p class="text-5xl font-bold font-mono tracking-tighter text-white">$1,740.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // Data for row generation
+        const sizeCounts = {
+            'table-cab-sup': 8,
+            'table-cab-pan': 11,
+            'table-dama-sup': 8,
+            'table-dama-impar': 11,
+            'table-calzado': 11
+        };
+
+        function createRow(tableId) {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 dark:hover:bg-white/5 transition-colors";
+
+            let html = '';
+
+            // Check if this table needs "Bordados" column (Caballero and Dama tables)
+            const hasBordados = ['table-cab-sup', 'table-cab-pan', 'table-dama-sup', 'table-dama-impar'].includes(tableId);
+
+            if (hasBordados) {
+                html += `
+                    <td class="p-2 text-center">
+                        <input type="checkbox" class="rounded border-slate-300 text-brand-600 shadow-sm focus:border-brand-300 focus:ring focus:ring-brand-200 focus:ring-opacity-50 w-4 h-4 cursor-pointer">
+                    </td>`;
+            }
+
+            // Standard columns
+            html += `
+                <td class="p-2"><input type="text" class="table-input text-xs" placeholder="Tipo"></td>
+                <td class="p-2"><input type="text" class="table-input text-xs" placeholder="Descripción"></td>
+                <td class="p-2"><input type="text" class="table-input text-xs" placeholder="Color"></td>
+                <td class="p-2"><input type="text" class="table-input text-xs" placeholder="Código"></td>
+            `;
+
+            // Dynamic size columns
+            const count = sizeCounts[tableId];
+            for (let i = 0; i < count; i++) {
+                html += `<td class="p-1"><input type="number" min="0" class="table-input size-input text-xs" placeholder="-"></td>`;
+            }
+
+            // Price and Totals
+            html += `
+                <td class="p-2"><input type="number" min="0" step="0.01" class="table-input text-right text-xs price-input" placeholder="0.00"></td>
+                <td class="p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-300 qty-display">0</td>
+                <td class="p-2 text-right text-xs font-bold text-slate-900 dark:text-white total-display">$0.00</td>
+                <td class="p-2 text-center">
+                    <button onclick="removeRow(this)" class="text-slate-400 hover:text-red-500 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </td>
+            `;
+
+            tr.innerHTML = html;
+
+            // Add event listeners for calculation
+            const inputs = tr.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => calculateRow(tr));
+            });
+
+            return tr;
+        }
+
+        function addRow(tableId) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+            tbody.appendChild(createRow(tableId));
+            // Recalculate grand totals after adding a row (though it will be empty)
+            updateGrandTotals();
+        }
+
+        function removeRow(btn) {
+            if (confirm('¿Eliminar renglón?')) {
+                btn.closest('tr').remove();
+                updateGrandTotals();
+            }
+        }
+
+        function calculateRow(tr) {
+            // Get size inputs
+            const sizeInputs = tr.querySelectorAll('.size-input');
+            let totalQty = 0;
+            sizeInputs.forEach(input => {
+                const val = parseInt(input.value) || 0;
+                totalQty += val;
+            });
+
+            // Get Price
+            const priceInput = tr.querySelector('.price-input');
+            const price = parseFloat(priceInput.value) || 0;
+
+            // Calculate Total
+            const total = totalQty * price;
+
+            // Update DOM
+            tr.querySelector('.qty-display').textContent = totalQty;
+            tr.querySelector('.total-display').textContent = '$' + total.toFixed(2);
+
+            // Update Grand Totals
+            updateGrandTotals();
+        }
+
+        function updateGrandTotals() {
+            let grandQty = 0;
+            let grandSubtotal = 0;
+
+            // Iterate all tables
+            Object.keys(sizeCounts).forEach(tableId => {
+                const table = document.getElementById(tableId);
+                if (!table) return;
+
+                // Sum Qty
+                table.querySelectorAll('.qty-display').forEach(td => {
+                    grandQty += parseInt(td.textContent) || 0;
+                });
+
+                // Sum Totals
+                table.querySelectorAll('.total-display').forEach(td => {
+                    // Remove '$' and ',' if present
+                    const val = parseFloat(td.textContent.replace(/[^0-9.-]+/g, "")) || 0;
+                    grandSubtotal += val;
+                });
+            });
+
+            // Calculate Extra Services
+            let extrasTotal = 0;
+            document.querySelectorAll('.extra-service-check').forEach(chk => {
+                if (chk.checked) {
+                    const container = chk.closest('.flex');
+                    if (container) {
+                        const priceInput = container.querySelector('.extra-service-price');
+                        if (priceInput) {
+                            extrasTotal += parseFloat(priceInput.value) || 0;
+                        }
+                    }
+                }
+            });
+            grandSubtotal += extrasTotal;
+
+            // Update DOM Elements
+            const lblTotalCantidad = document.getElementById('lblTotalCantidad');
+            const lblTotalPedido = document.getElementById('lblTotalPedido');
+            const lblSubtotal = document.getElementById('lblSubtotal');
+            const lblIva = document.getElementById('lblIva');
+            const lblGranTotal = document.getElementById('lblGranTotal');
+
+            if (lblTotalCantidad) lblTotalCantidad.textContent = grandQty.toFixed(2);
+            if (lblTotalPedido) lblTotalPedido.textContent = grandQty.toFixed(2);
+
+            if (lblSubtotal) lblSubtotal.textContent = '$' + grandSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            const iva = grandSubtotal * 0.16;
+            if (lblIva) lblIva.textContent = '$' + iva.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            const total = grandSubtotal + iva;
+            if (lblGranTotal) lblGranTotal.textContent = '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize tables with one row each
+            Object.keys(sizeCounts).forEach(id => addRow(id));
+
+            // Set Dates
+            const now = new Date();
+            const fechaPedido = document.getElementById('fechaPedido');
+            if (fechaPedido) fechaPedido.value = now.toISOString().split('T')[0];
+
+            const fechaCaptura = document.getElementById('fechaCaptura');
+            if (fechaCaptura) fechaCaptura.textContent = now.toLocaleDateString('es-MX');
+
+            // Button Animation & Toast
+            const btnSave = document.getElementById('btnSave');
+            const toast = document.getElementById('toast');
+
+            if (btnSave) {
+                btnSave.addEventListener('click', () => {
+                    const btnContent = btnSave.querySelector('span');
+                    const originalContent = btnContent.innerHTML;
+
+                    // Loading State
+                    btnContent.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Guardando...`;
+                    btnSave.disabled = true;
+
+                    setTimeout(() => {
+                        // Success State on Button
+                        btnContent.innerHTML = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Guardado`;
+                        btnSave.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'dark:bg-emerald-600', 'dark:hover:bg-emerald-500');
+                        btnSave.classList.remove('bg-slate-900', 'dark:bg-brand-600');
+
+                        // Show Toast
+                        if (toast) {
+                            toast.classList.remove('translate-x-[120%]', 'opacity-0');
+
+                            // Reset
+                            setTimeout(() => {
+                                btnContent.innerHTML = originalContent;
+                                btnSave.disabled = false;
+                                btnSave.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'dark:bg-emerald-600', 'dark:hover:bg-emerald-500');
+                                btnSave.classList.add('bg-slate-900', 'dark:bg-brand-600');
+
+                                // Hide Toast after delay
+                                setTimeout(() => {
+                                    toast.classList.add('translate-x-[120%]', 'opacity-0');
+                                }, 3000);
+                            }, 2000);
+                        }
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

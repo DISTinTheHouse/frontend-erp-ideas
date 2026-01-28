@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CxC - Ficha de Cliente</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9', // Sky 500
+                            600: '#0284c7', // Sky 600
+                            700: '#0369a1', // Sky 700
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(14, 165, 233, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Smooth transitions */
+        .transition-all-300 {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Input Focus Ring Animation */
+        .input-group:focus-within label {
+            color: #0ea5e9;
+        }
+    </style>
+
+    <!-- Theme Logic -->
+    <script>
+        (function () {
+            const root = document.documentElement;
+            function applySystemTheme() {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) {
+                    root.classList.add('dark');
+                    root.setAttribute('data-bs-theme', 'dark');
+                } else {
+                    root.classList.remove('dark');
+                    root.setAttribute('data-bs-theme', 'light');
+                }
+            }
+            applySystemTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+        })();
+    </script>
+</head>
+
+<body class="bg-slate-50/80 dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 min-h-screen pb-32 transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-black/80 border-b border-slate-200/80 dark:border-white/10 supports-[backdrop-filter]:bg-white/60">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="core.html" class="group flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-500 hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-glow">
+                        <svg class="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </a>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white font-display tracking-tight">
+                            Cliente
+                        </h1>
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">CxC - Cuentas por Cobrar</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex flex-col items-end mr-2">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Última modificación</span>
+                        <span class="text-xs font-mono text-slate-600 dark:text-slate-300 font-medium">Hace 2 min</span>
+                    </div>
+                    <button type="button" id="btnSave" class="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 bg-slate-900 dark:bg-white dark:text-black rounded-xl hover:bg-brand-600 dark:hover:bg-brand-400 dark:hover:text-white shadow-lg shadow-slate-900/20 hover:shadow-brand-500/30 hover:-translate-y-0.5 active:translate-y-0">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                        Guardar Ficha
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- 1. Identificación del Cliente (Hero Card) -->
+        <section class="relative overflow-hidden bg-white dark:bg-zinc-900 rounded-[2rem] p-6 md:p-8 border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none group hover:border-brand-200 dark:hover:border-brand-900 transition-colors duration-300">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 w-96 h-96 bg-brand-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+            
+            <div class="flex flex-col lg:flex-row gap-8 items-start relative z-10">
+                <!-- Logo Upload -->
+                <div class="shrink-0 relative">
+                    <div class="w-36 h-36 rounded-3xl bg-slate-50 dark:bg-black/20 border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 transition-all hover:border-brand-500 hover:text-brand-500 hover:bg-brand-50/50 dark:hover:bg-brand-900/10 cursor-pointer overflow-hidden shadow-inner">
+                        <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="text-[10px] font-bold uppercase tracking-widest opacity-70">Logotipo</span>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-mono tracking-wide">
+                            CLI-2024-001
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Main Info Inputs -->
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 w-full">
+                    <div class="md:col-span-2 lg:col-span-3 input-group">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Razón Social</label>
+                        <input type="text" class="w-full bg-transparent border-b-2 border-slate-200 dark:border-slate-800 focus:border-brand-500 dark:focus:border-brand-500 px-1 py-2 text-3xl font-bold text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-700 outline-none transition-colors" placeholder="Empresa S.A. de C.V.">
+                    </div>
+                    <div class="input-group">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Estatus</label>
+                        <div class="relative">
+                            <select class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-emerald-600 dark:text-emerald-400 outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all appearance-none">
+                                <option value="activo">Activo</option>
+                                <option value="bloqueado">Bloqueado</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 input-group">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Nombre Comercial</label>
+                        <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:bg-white dark:focus:bg-black/40 transition-all placeholder-slate-400" placeholder="Ej. Tech Solutions">
+                    </div>
+                    <div class="input-group">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Sucursal Asignada</label>
+                        <div class="relative">
+                            <select class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:bg-white dark:focus:bg-black/40 transition-all appearance-none">
+                                <option value="matriz">Matriz Central</option>
+                                <option value="norte">Sucursal Norte</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Código Interno</label>
+                        <input type="text" value="AUTO-GENERATED" readonly class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-400 font-mono outline-none cursor-not-allowed select-none">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
+            
+            <!-- Left Column: Fiscal, Address, Contact -->
+            <div class="xl:col-span-2 space-y-8">
+                
+                <!-- 2 & 3. Fiscal y Dirección (Grouped Tabs Visual) -->
+                <div class="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div class="px-8 py-5 border-b border-slate-100 dark:border-white/5 flex items-center gap-3 bg-slate-50/50 dark:bg-white/[0.02]">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-semibold text-slate-900 dark:text-white text-lg">Información Fiscal</h3>
+                            <p class="text-xs text-slate-500">Datos para facturación y domicilio</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8 space-y-8">
+                        <!-- Datos Fiscales -->
+                        <div>
+                            <h4 class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider mb-5 flex items-center gap-2">
+                                <span class="flex h-2 w-2 relative">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                                </span> 
+                                Datos Fiscales (SAT)
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">RFC</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono uppercase outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-300" placeholder="XAXX010101000">
+                                </div>
+                                <div class="md:col-span-2 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Régimen Fiscal</label>
+                                    <select class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="601">601 - General de Ley Personas Morales</option>
+                                        <option value="612">612 - Personas Físicas con Actividades Empresariales</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Uso CFDI</label>
+                                    <select class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                        <option value="G03">G03 - Gastos en general</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">CURP</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono uppercase outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-300">
+                                </div>
+                                <div class="input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">País Fiscal</label>
+                                    <input type="text" value="México" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-slate-100 dark:bg-white/5"></div>
+
+                        <!-- Dirección -->
+                        <div>
+                            <h4 class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider mb-5 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full border border-indigo-500"></span> Domicilio Fiscal
+                            </h4>
+                            <div class="grid grid-cols-12 gap-5">
+                                <div class="col-span-12 md:col-span-6 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Calle</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                                <div class="col-span-6 md:col-span-2 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">No. Ext</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                                <div class="col-span-6 md:col-span-2 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">No. Int</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                                <div class="col-span-12 md:col-span-2 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">C.P.</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                                
+                                <div class="col-span-12 md:col-span-4 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Colonia</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                                <div class="col-span-12 md:col-span-4 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Municipio</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                                <div class="col-span-12 md:col-span-4 input-group">
+                                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Estado</label>
+                                    <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Contacto -->
+                <div class="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none p-8 hover:shadow-lg transition-shadow duration-300">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400 shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="font-display font-semibold text-slate-900 dark:text-white text-lg">Datos de Contacto</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2 input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Nombre Contacto</label>
+                            <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder-slate-400" placeholder="Ej. Juan Pérez">
+                        </div>
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Correo Electrónico</label>
+                            <input type="email" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder-slate-400" placeholder="contacto@cliente.com">
+                        </div>
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Sitio Web</label>
+                            <input type="url" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder-slate-400" placeholder="www.cliente.com">
+                        </div>
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Teléfono</label>
+                            <input type="tel" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all">
+                        </div>
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Celular</label>
+                            <input type="tel" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Información Contable -->
+                <div class="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none p-8 hover:shadow-lg transition-shadow duration-300">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center text-violet-600 dark:text-violet-400 shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="font-display font-semibold text-slate-900 dark:text-white text-lg">Configuración Contable</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Cuenta Contable</label>
+                            <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-mono outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder-slate-400" placeholder="105-001-000">
+                        </div>
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Centro de Costos</label>
+                            <input type="text" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder-slate-400">
+                        </div>
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Moneda Predeterminada</label>
+                            <select class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all">
+                                <option value="MXN">Peso Mexicano (MXN)</option>
+                                <option value="USD">Dólar Americano (USD)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Tipo Cliente</label>
+                            <select class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all">
+                                <option value="local">Nacional</option>
+                                <option value="extranjero">Extranjero</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2 pt-2">
+                            <label class="inline-flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" class="peer sr-only" checked>
+                                <div class="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-violet-500 relative"></div>
+                                <span class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-violet-600 transition-colors">Aplicar Impuestos (IVA)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Commercial Conditions, Accumulated, System -->
+            <div class="space-y-8">
+
+                <!-- 5. Condiciones Comerciales (Credit Monitor) -->
+                <div class="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none p-8 relative overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div class="flex items-center gap-3 mb-6 relative z-10">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="font-display font-semibold text-slate-900 dark:text-white text-lg">Crédito y Precios</h3>
+                    </div>
+
+                    <div class="space-y-6 relative z-10">
+                        <div class="grid grid-cols-2 gap-5">
+                            <div class="input-group">
+                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Lista Precios</label>
+                                <select class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all">
+                                    <option value="publico">Público</option>
+                                    <option value="mayorista">Mayorista</option>
+                                    <option value="distribuidor">Distribuidor</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block transition-colors">Días Crédito</label>
+                                <input type="number" value="30" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-center outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all">
+                            </div>
+                        </div>
+
+                        <!-- Credit Widget -->
+                        <div class="bg-slate-50 dark:bg-black/30 rounded-2xl p-5 border border-slate-100 dark:border-white/5 space-y-5">
+                            <div class="flex justify-between items-center">
+                                <p class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Línea de Crédito</p>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> DISPONIBLE
+                                </span>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">$50,000.00</span>
+                                    <span class="text-xs font-medium text-slate-500">Límite Autorizado</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 w-[0%] transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(16,185,129,0.5)]" id="creditBar"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wide pt-1">
+                                    <span>Uso: $0.00</span>
+                                    <span>Disp: $50,000.00</span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 pt-1">
+                                <div class="input-group">
+                                    <label class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1 block">Vencimiento</label>
+                                    <input type="date" class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs focus:border-amber-500 transition-colors">
+                                </div>
+                                <div class="input-group">
+                                    <label class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1 block">Revisión</label>
+                                    <select class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs focus:border-amber-500 transition-colors">
+                                        <option>Viernes</option>
+                                        <option>Lunes</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Discounts -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="input-group">
+                                <label class="text-[10px] font-bold text-slate-400 text-center block mb-1">DESC 1</label>
+                                <input type="number" value="0" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl py-2 text-sm text-center outline-none focus:border-amber-500 transition-colors">
+                            </div>
+                            <div class="input-group">
+                                <label class="text-[10px] font-bold text-slate-400 text-center block mb-1">DESC 2</label>
+                                <input type="number" value="0" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl py-2 text-sm text-center outline-none focus:border-amber-500 transition-colors">
+                            </div>
+                            <div class="input-group">
+                                <label class="text-[10px] font-bold text-slate-400 text-center block mb-1">DESC 3</label>
+                                <input type="number" value="0" class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl py-2 text-sm text-center outline-none focus:border-amber-500 transition-colors">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Acumulados (Dark Card) -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-[2rem] shadow-2xl shadow-slate-900/20 p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-brand-500/30 transition-colors"></div>
+                    
+                    <div class="flex items-center gap-3 mb-8 border-b border-white/10 pb-4 relative z-10">
+                        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white backdrop-blur-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <h3 class="font-display font-semibold text-lg">Métricas Clave</h3>
+                    </div>
+                    
+                    <div class="space-y-6 relative z-10">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Saldo Actual</p>
+                                <p class="text-3xl font-bold mt-1 text-white tracking-tight">$0.00</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Acumulado Anual</p>
+                                <p class="text-sm font-bold mt-1 text-emerald-400 font-mono bg-emerald-500/10 px-2 py-1 rounded">$12,450.00</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors">
+                                <p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Última Compra</p>
+                                <p class="text-sm font-medium mt-1">15/Ene/2024</p>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors">
+                                <p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Días Pago Real</p>
+                                <p class="text-sm font-medium mt-1 text-emerald-300">12 Días</p>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors">
+                                <p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Último Pago</p>
+                                <p class="text-sm font-medium mt-1">--/--/----</p>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors">
+                                <p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Fecha Baja</p>
+                                <p class="text-sm font-medium mt-1 text-slate-500">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Control Sistema -->
+                <div class="bg-slate-50 dark:bg-white/5 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-inner p-8">
+                    <h3 class="text-xs font-bold uppercase text-slate-400 tracking-widest mb-6">Auditoría del Registro</h3>
+                    <div class="space-y-4 text-xs">
+                        <div class="flex justify-between items-center py-2 border-b border-slate-200 dark:border-white/5">
+                            <span class="text-slate-500 font-medium">Fecha Alta</span>
+                            <span class="font-mono font-bold text-slate-700 dark:text-slate-300" id="fechaAltaDisplay">--/--/----</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-200 dark:border-white/5">
+                            <span class="text-slate-500 font-medium">Usuario Alta</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-black/20 px-2 py-1 rounded">admin@sistema.com</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-200 dark:border-white/5">
+                            <span class="text-slate-500 font-medium">Última Modificación</span>
+                            <span class="font-mono text-slate-400">--</span>
+                        </div>
+                        
+                        <div class="pt-4">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" value="" class="sr-only peer" checked disabled>
+                                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-brand-500"></div>
+                                </div>
+                                <span class="font-medium text-slate-600 dark:text-slate-300 group-hover:text-brand-600 transition-colors">Verificación Fiscal OK</span>
+                            </label>
+                        </div>
+                        
+                        <div class="pt-2">
+                            <label class="block text-slate-500 font-bold mb-2 uppercase text-[10px] tracking-wider">Observaciones Internas</label>
+                            <textarea rows="2" class="w-full bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl p-3 outline-none resize-none focus:border-brand-500 transition-colors placeholder-slate-300" placeholder="Escribe aquí notas para el equipo..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set Dates
+            const now = new Date();
+            document.getElementById('fechaAltaDisplay').textContent = now.toLocaleDateString('es-MX');
+
+            // Button Animation
+            const btnSave = document.getElementById('btnSave');
+            btnSave.addEventListener('click', () => {
+                const originalText = btnSave.innerHTML;
+                btnSave.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Guardando...`;
+                btnSave.disabled = true;
+                
+                setTimeout(() => {
+                    btnSave.innerHTML = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Guardado`;
+                    btnSave.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                    setTimeout(() => {
+                        btnSave.innerHTML = originalText;
+                        btnSave.disabled = false;
+                        btnSave.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                    }, 2000);
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Cliente | ERP</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6', // Violet 500 to match ventas_pedidos
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(139, 92, 246, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        .tab-active {
+            border-bottom-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .tab-inactive {
+            border-bottom-color: transparent;
+            color: #64748b;
+        }
+
+        .tab-inactive:hover {
+            border-bottom-color: #e2e8f0;
+            color: #1e293b;
+        }
+
+        /* Input Focus Ring Animation */
+        .input-group:focus-within label {
+            color: #8b5cf6;
+        }
+    </style>
+
+    <!-- Theme Logic -->
+    <script>
+            (function () {
+                const root = document.documentElement;
+                function applySystemTheme() {
+                    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (isDark) {
+                        root.classList.add('dark');
+                    } else {
+                        root.classList.remove('dark');
+                    }
+                }
+                applySystemTheme();
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+            })();
+    </script>
+</head>
+
+<body
+    class="bg-slate-50/80 dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 min-h-screen pb-8 transition-colors duration-300">
+
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-black/80 border-b border-slate-200/80 dark:border-white/10 supports-[backdrop-filter]:bg-white/60">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="index.html"
+                        class="group flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-500 hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-glow">
+                        <svg class="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white font-display tracking-tight">Nuevo
+                            Cliente</h1>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Registro y Alta</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider hidden sm:block">ID:
+                        <span
+                            class="font-mono bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded text-slate-600 dark:text-slate-300">AUTO-GEN</span></span>
+
+                    <button type="button"
+                        class="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 bg-slate-900 dark:bg-brand-600 rounded-xl hover:bg-slate-800 dark:hover:bg-brand-500 shadow-lg shadow-slate-900/20 dark:shadow-brand-500/20 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden">
+                        <span class="relative z-10 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                                </path>
+                            </svg>
+                            Guardar Cliente
+                        </span>
+                        <div
+                            class="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-white/10 transition-transform duration-300">
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-1">
+                <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                    <button onclick="switchTab('general')" id="btn-general"
+                        class="tab-active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        General
+                    </button>
+                    <!-- <button onclick="switchTab('fiscal')" id="btn-fiscal"
+                        class="tab-inactive whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Fiscal
+                    </button> -->
+                    <button onclick="switchTab('contacto')" id="btn-contacto"
+                        class="tab-inactive whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Contacto
+                    </button>
+                    <button onclick="switchTab('direcciones')" id="btn-direcciones"
+                        class="tab-inactive whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Direcciones
+                    </button>
+                </nav>
+            </div>
+    </header>
+
+    <main class="relative z-10 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-3">
+
+        <!-- TAB: GENERAL -->
+        <section id="tab-general" class="space-y-3 animate-fade-in">
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none transition-colors duration-300">
+                <h2
+                    class="text-base font-bold text-slate-900 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-white/5 font-display">
+                    Información General</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <!-- Nombre Comercial y Código -->
+                    <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div class="md:col-span-3 input-group">
+                            <label for="nombre_comercial"
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Nombre
+                                Comercial <span class="text-red-500">*</span></label>
+                            <input type="text" id="nombre_comercial" oninput="generateSlug()"
+                                class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                                placeholder="Ej. Empresa Leader S.A. de C.V.">
+                        </div>
+                        <div class="md:col-span-1 input-group">
+                            <label for="codigo_cliente"
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Código
+                                (Slug)</label>
+                            <div class="relative">
+                                <input type="text" id="codigo_cliente"
+                                    class="w-full bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-mono text-slate-600 dark:text-slate-300 outline-none focus:border-brand-500 transition-colors uppercase"
+                                    placeholder="AUTO-GEN" readonly>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                    <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Razón Social -->
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="razon_social"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Razón
+                            Social</label>
+                        <input type="text" id="razon_social" name="razon_social"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="Razón Social Oficial">
+                    </div>
+                    <div class="input-group">
+                        <label for="rfc"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">RFC</label>
+                        <input type="text" id="rfc"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="XAXX010101000">
+                    </div>
+                    <div class="input-group">
+                        <label for="curp"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">CURP</label>
+                        <input type="text" id="curp"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                    </div>
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="regimen"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Régimen
+                            Fiscal</label>
+                        <select id="regimen"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            <option value="">Seleccione un régimen...</option>
+                            <option value="601">601 - General de Ley Personas Morales</option>
+                            <option value="603">603 - Personas Morales con Fines no Lucrativos</option>
+                            <option value="605">605 - Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+                            <option value="606">606 - Arrendamiento</option>
+                            <option value="612">612 - Personas Físicas con Actividades Empresariales y Profesionales
+                            </option>
+                            <option value="626">626 - Régimen Simplificado de Confianza</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none transition-colors duration-300">
+                <h2
+                    class="text-base font-bold text-slate-900 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-white/5 font-display">
+                    Dirección Principal</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <!-- Calle -->
+                    <div class="col-span-1 md:col-span-4 input-group">
+                        <label for="calle"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Calle</label>
+                        <input type="text" id="calle" name="calle"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="Av. Reforma">
+                    </div>
+
+                    <!-- No. Exterior / Interior -->
+                    <div class="col-span-1 md:col-span-1 input-group">
+                        <label for="no_exterior"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">No.
+                            Exterior</label>
+                        <input type="text" id="no_exterior" name="no_exterior"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="123">
+                    </div>
+                    <div class="col-span-1 md:col-span-1 input-group">
+                        <label for="no_interior"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">No.
+                            Interior</label>
+                        <input type="text" id="no_interior" name="no_interior"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="Apt 4B">
+                    </div>
+
+                    <!-- CP -->
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="cp"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Código
+                            Postal</label>
+                        <input type="text" id="cp" name="cp"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="06000">
+                    </div>
+
+                    <!-- Colonia / Delegación -->
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="colonia"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Colonia</label>
+                        <input type="text" id="colonia" name="colonia"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="Centro">
+                    </div>
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="delegacion"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Delegación
+                            / Municipio</label>
+                        <input type="text" id="delegacion" name="delegacion"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="Cuauhtémoc">
+                    </div>
+
+                    <!-- Ciudad / Estado -->
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="ciudad"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Ciudad</label>
+                        <input type="text" id="ciudad" name="ciudad"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="Ciudad de México">
+                    </div>
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="estado"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Estado</label>
+                        <input type="text" id="estado" name="estado"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="CDMX">
+                    </div>
+
+                    <!-- País / Sucursal -->
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="pais"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">País</label>
+                        <select id="pais" name="pais"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            <option value="MX" selected>México</option>
+                            <option value="US">Estados Unidos</option>
+                            <option value="CA">Canadá</option>
+                        </select>
+                    </div>
+
+                    <!-- Sucursal -->
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="sucursal"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Sucursal
+                            <span class="text-slate-300 font-normal">(Opcional)</span></label>
+                        <input type="text" id="sucursal" name="sucursal"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="Matriz">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: FISCAL -->
+        <!-- <section id="tab-fiscal" class="hidden space-y-3">
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none transition-colors duration-300">
+                <h2
+                    class="text-base font-bold text-slate-900 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-white/5 font-display">
+                    Datos de Facturación</h2>
+                <div
+                    class="mb-3 p-3 bg-brand-50 dark:bg-brand-500/10 rounded-lg border border-brand-100 dark:border-brand-500/20 flex items-start">
+                    <svg class="w-4 h-4 text-brand-500 mr-2 mt-0.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-xs text-brand-700 dark:text-brand-300 font-medium">Los datos fiscales son opcionales
+                        si el cliente no requiere factura inmediata.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="input-group">
+                        <label for="rfc"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">RFC</label>
+                        <input type="text" id="rfc"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                            placeholder="XAXX010101000">
+                    </div>
+                    <div class="input-group">
+                        <label for="curp"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">CURP</label>
+                        <input type="text" id="curp"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                    </div>
+                    <div class="col-span-1 md:col-span-2 input-group">
+                        <label for="regimen"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Régimen
+                            Fiscal</label>
+                        <select id="regimen"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            <option value="">Seleccione un régimen...</option>
+                            <option value="601">601 - General de Ley Personas Morales</option>
+                            <option value="603">603 - Personas Morales con Fines no Lucrativos</option>
+                            <option value="605">605 - Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+                            <option value="606">606 - Arrendamiento</option>
+                            <option value="612">612 - Personas Físicas con Actividades Empresariales y Profesionales
+                            </option>
+                            <option value="626">626 - Régimen Simplificado de Confianza</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section> -->
+
+        <!-- TAB: CONTACTO -->
+        <section id="tab-contacto" class="hidden space-y-3">
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none transition-colors duration-300">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white font-display">
+                        Lista de Contactos
+                    </h2>
+                    <button onclick="openContactModal()"
+                        class="group relative inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white transition-all duration-200 bg-slate-900 dark:bg-brand-600 rounded-xl hover:bg-slate-800 dark:hover:bg-brand-500 shadow-lg shadow-slate-900/20 dark:shadow-brand-500/20 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden">
+                        <span class="relative z-10 flex items-center">
+                            <svg class="mr-2 -ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Agregar Contacto
+                        </span>
+                        <div
+                            class="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-white/10 transition-transform duration-300">
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Lista de Contactos -->
+                <div id="contactos-container">
+                    <!-- Estado Vacío -->
+                    <div id="empty-state-contactos"
+                        class="text-center py-8 bg-slate-50 dark:bg-black/20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700/50">
+                        <div
+                            class="bg-white dark:bg-zinc-800 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+                            <svg class="h-6 w-6 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="mt-1 text-sm font-bold text-slate-900 dark:text-white">No hay contactos registrados
+                        </h3>
+                        <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Agregue personas de contacto para
+                            este cliente.
+                        </p>
+                    </div>
+
+                    <!-- Grid de Tarjetas -->
+                    <div id="lista-contactos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: DIRECCIONES -->
+        <section id="tab-direcciones" class="hidden space-y-3">
+            <div
+                class="bg-white dark:bg-zinc-900 rounded-xl p-4 border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none transition-colors duration-300">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white font-display">
+                        Direcciones Adicionales
+                    </h2>
+                    <button onclick="openModal()"
+                        class="group relative inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white transition-all duration-200 bg-slate-900 dark:bg-brand-600 rounded-xl hover:bg-slate-800 dark:hover:bg-brand-500 shadow-lg shadow-slate-900/20 dark:shadow-brand-500/20 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden">
+                        <span class="relative z-10 flex items-center">
+                            <svg class="mr-2 -ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Agregar Dirección
+                        </span>
+                        <div
+                            class="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-white/10 transition-transform duration-300">
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Lista de Direcciones -->
+                <div id="direcciones-container">
+                    <!-- Estado Vacío -->
+                    <div id="empty-state"
+                        class="text-center py-8 bg-slate-50 dark:bg-black/20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700/50">
+                        <div
+                            class="bg-white dark:bg-zinc-800 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+                            <svg class="h-6 w-6 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mt-1 text-sm font-bold text-slate-900 dark:text-white">No hay direcciones adicionales
+                        </h3>
+                        <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Comience agregando una nueva
+                            dirección de envío o facturación.
+                        </p>
+                    </div>
+
+                    <!-- Grid de Tarjetas -->
+                    <div id="lista-direcciones" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <!-- Modal Dirección -->
+    <div id="modal-direccion" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title"
+        role="dialog" aria-modal="true">
+        <!-- Overlay -->
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/50 dark:bg-black/80 backdrop-blur-sm transition-opacity"
+                aria-hidden="true" onclick="closeModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Modal Panel -->
+            <div
+                class="inline-block align-bottom bg-white dark:bg-zinc-900 rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 dark:border-white/10">
+                <div class="bg-white dark:bg-zinc-900 p-4 sm:p-5">
+                    <div
+                        class="flex justify-between items-center mb-3 pb-3 border-b border-slate-100 dark:border-white/5">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-display" id="modal-title">Nueva
+                            Dirección</h3>
+                        <button onclick="closeModal()"
+                            class="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form id="form-direccion" class="space-y-3">
+                        <div class="input-group">
+                            <label for="m_tipo"
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Tipo
+                                de
+                                Dirección</label>
+                            <select id="m_tipo"
+                                class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                                <option value="Envío">Envío</option>
+                                <option value="Facturación">Facturación</option>
+                                <option value="Otra">Otra</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="md:col-span-2 input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Calle</label>
+                                <input type="text" id="m_calle"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">No.
+                                    Exterior</label>
+                                <input type="text" id="m_exterior"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">No.
+                                    Interior</label>
+                                <input type="text" id="m_interior"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Colonia</label>
+                                <input type="text" id="m_colonia"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Delegación
+                                    / Municipio</label>
+                                <input type="text" id="m_delegacion"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="md:col-span-1 input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">CP</label>
+                                <input type="text" id="m_cp"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <div class="md:col-span-2 input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Ciudad</label>
+                                <input type="text" id="m_ciudad"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Estado</label>
+                                <input type="text" id="m_estado"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                            </div>
+                            <div class="input-group">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">País</label>
+                                <input type="text" id="m_pais" value="México" readonly
+                                    class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Referencias</label>
+                            <textarea id="m_referencias" rows="2"
+                                class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors resize-none"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div
+                    class="bg-slate-50 dark:bg-black/20 px-4 py-3 flex flex-row-reverse gap-3 border-t border-slate-100 dark:border-white/5">
+                    <button type="button" onclick="saveAddress()"
+                        class="w-full sm:w-auto inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-semibold rounded-lg shadow-sm text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">
+                        Agregar Dirección
+                    </button>
+                    <button type="button" onclick="closeModal()"
+                        class="w-full sm:w-auto inline-flex justify-center items-center px-3 py-2 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-lg text-slate-700 dark:text-slate-300 bg-white dark:bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Contacto -->
+    <div id="modal-contacto" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title"
+        role="dialog" aria-modal="true">
+        <!-- Overlay -->
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/50 dark:bg-black/80 backdrop-blur-sm transition-opacity"
+                aria-hidden="true" onclick="closeContactModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Modal Panel -->
+            <div
+                class="inline-block align-bottom bg-white dark:bg-zinc-900 rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 dark:border-white/10">
+                <div class="bg-white dark:bg-zinc-900 p-4 sm:p-5">
+                    <div
+                        class="flex justify-between items-center mb-3 pb-3 border-b border-slate-100 dark:border-white/5">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-display"
+                            id="modal-title-contacto">Nuevo
+                            Contacto</h3>
+                        <button onclick="closeContactModal()"
+                            class="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form id="form-contacto" class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="md:col-span-2 input-group">
+                                <label for="c_nombre"
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Nombre
+                                    Completo del contacto<span class="text-red-500">*</span></label>
+                                <input type="text" id="c_nombre"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                                    placeholder="Juan Pérez">
+                            </div>
+                            <div class="input-group">
+                                <label for="c_puesto"
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Sitio
+                                    web</label>
+                                <input type="text" id="c_puesto"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                                    placeholder="https://www.empresa.com">
+                            </div>
+                            <div class="input-group">
+                                <label for="c_email"
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Correo
+                                    Electrónico</label>
+                                <input type="email" id="c_email"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                                    placeholder="juan@empresa.com">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="input-group">
+                                <label for="c_telefono"
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Teléfono
+                                    Oficina / Extencion</label>
+                                <input type="tel" id="c_telefono"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                                    placeholder="(55) 1234 5678">
+                            </div>
+                            <div class="input-group">
+                                <label for="c_celular"
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 block">Celular
+                                    / WhatsApp</label>
+                                <input type="tel" id="c_celular"
+                                    class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition-colors"
+                                    placeholder="(55) 9876 5432">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div
+                    class="bg-slate-50 dark:bg-black/20 px-4 py-3 flex flex-row-reverse gap-3 border-t border-slate-100 dark:border-white/5">
+                    <button type="button" onclick="saveContact()"
+                        class="w-full sm:w-auto inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-semibold rounded-lg shadow-sm text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">
+                        Guardar Contacto
+                    </button>
+                    <button type="button" onclick="closeContactModal()"
+                        class="w-full sm:w-auto inline-flex justify-center items-center px-3 py-2 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-lg text-slate-700 dark:text-slate-300 bg-white dark:bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let addresses = [];
+        let contacts = [];
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('main > section').forEach(el => {
+                el.classList.add('hidden');
+            });
+            // Show target section
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            // Update Tab Styles
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('tab-inactive');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('tab-inactive');
+            activeBtn.classList.add('tab-active');
+        }
+
+        // Modal Logic (Direcciones)
+        function openModal() {
+            document.getElementById('modal-direccion').classList.remove('hidden');
+            document.getElementById('form-direccion').reset();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-direccion').classList.add('hidden');
+        }
+
+        function saveAddress() {
+            const data = {
+                tipo: document.getElementById('m_tipo').value,
+                calle: document.getElementById('m_calle').value,
+                exterior: document.getElementById('m_exterior').value,
+                interior: document.getElementById('m_interior').value,
+                colonia: document.getElementById('m_colonia').value,
+                delegacion: document.getElementById('m_delegacion').value,
+                ciudad: document.getElementById('m_ciudad').value,
+                estado: document.getElementById('m_estado').value,
+                cp: document.getElementById('m_cp').value,
+                referencias: document.getElementById('m_referencias').value
+            };
+
+            // Simple validation
+            if (!data.calle) {
+                alert('La calle es requerida');
+                return;
+            }
+
+            addresses.push(data);
+            renderAddresses();
+            closeModal();
+        }
+
+        function deleteAddress(index) {
+            if (confirm('¿Estás seguro de eliminar esta dirección?')) {
+                addresses.splice(index, 1);
+                renderAddresses();
+            }
+        }
+
+        function editAddress(index) {
+            // Mock edit - load data and remove old (simplest for demo)
+            const addr = addresses[index];
+            document.getElementById('m_tipo').value = addr.tipo;
+            document.getElementById('m_calle').value = addr.calle;
+            document.getElementById('m_exterior').value = addr.exterior;
+            document.getElementById('m_interior').value = addr.interior;
+            document.getElementById('m_colonia').value = addr.colonia;
+            document.getElementById('m_delegacion').value = addr.delegacion;
+            document.getElementById('m_ciudad').value = addr.ciudad;
+            document.getElementById('m_estado').value = addr.estado;
+            document.getElementById('m_cp').value = addr.cp;
+            document.getElementById('m_referencias').value = addr.referencias;
+
+            // Remove old so save creates new updated one
+            addresses.splice(index, 1);
+
+            document.getElementById('modal-direccion').classList.remove('hidden');
+        }
+
+        function renderAddresses() {
+            const container = document.getElementById('lista-direcciones');
+            const emptyState = document.getElementById('empty-state');
+
+            if (addresses.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            // Hide empty state, show container
+            emptyState.classList.add('hidden');
+            container.classList.remove('hidden');
+
+            let html = '';
+            addresses.forEach((addr, index) => {
+                html += `
+                <div class="bg-white dark:bg-zinc-800 rounded-2xl p-5 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md hover:border-brand-200 dark:hover:border-brand-500/30 transition-all duration-300 group">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${addr.tipo === 'Facturación' ? 'bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'}">
+                            ${addr.tipo}
+                        </span>
+                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editAddress(${index})" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                            <button onclick="deleteAddress(${index})" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="font-bold text-slate-900 dark:text-white text-sm">${addr.calle} ${addr.exterior} ${addr.interior ? 'Int ' + addr.interior : ''}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${addr.colonia}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${addr.ciudad}, ${addr.estado}, ${addr.cp}</p>
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Modal Logic (Contactos)
+        function openContactModal() {
+            document.getElementById('modal-contacto').classList.remove('hidden');
+            document.getElementById('form-contacto').reset();
+        }
+
+        function closeContactModal() {
+            document.getElementById('modal-contacto').classList.add('hidden');
+        }
+
+        function saveContact() {
+            const data = {
+                nombre: document.getElementById('c_nombre').value,
+                puesto: document.getElementById('c_puesto').value,
+                email: document.getElementById('c_email').value,
+                telefono: document.getElementById('c_telefono').value,
+                celular: document.getElementById('c_celular').value
+            };
+
+            // Simple validation
+            if (!data.nombre) {
+                alert('El nombre es requerido');
+                return;
+            }
+
+            contacts.push(data);
+            renderContacts();
+            closeContactModal();
+        }
+
+        function deleteContact(index) {
+            if (confirm('¿Estás seguro de eliminar este contacto?')) {
+                contacts.splice(index, 1);
+                renderContacts();
+            }
+        }
+
+        function editContact(index) {
+            const contact = contacts[index];
+            document.getElementById('c_nombre').value = contact.nombre;
+            document.getElementById('c_puesto').value = contact.puesto;
+            document.getElementById('c_email').value = contact.email;
+            document.getElementById('c_telefono').value = contact.telefono;
+            document.getElementById('c_celular').value = contact.celular;
+
+            // Remove old so save creates new updated one
+            contacts.splice(index, 1);
+
+            document.getElementById('modal-contacto').classList.remove('hidden');
+        }
+
+        function renderContacts() {
+            const container = document.getElementById('lista-contactos');
+            const emptyState = document.getElementById('empty-state-contactos');
+
+            if (contacts.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            // Hide empty state, show container
+            emptyState.classList.add('hidden');
+            container.classList.remove('hidden');
+
+            let html = '';
+            contacts.forEach((contact, index) => {
+                html += `
+                <div class="bg-white dark:bg-zinc-800 rounded-2xl p-5 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md hover:border-brand-200 dark:hover:border-brand-500/30 transition-all duration-300 group">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-3">
+                             <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center text-sm font-bold">
+                                ${contact.nombre.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 dark:text-white text-sm leading-tight">${contact.nombre}</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">${contact.puesto || 'Sin cargo'}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editContact(${index})" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                            <button onclick="deleteContact(${index})" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-white/5 mt-2">
+                        ${contact.email ? `
+                        <div class="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                            <svg class="w-3.5 h-3.5 mr-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            ${contact.email}
+                        </div>` : ''}
+                        ${contact.telefono ? `
+                        <div class="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                            <svg class="w-3.5 h-3.5 mr-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            ${contact.telefono}
+                        </div>` : ''}
+                        ${contact.celular ? `
+                        <div class="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                            <svg class="w-3.5 h-3.5 mr-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            ${contact.celular}
+                        </div>` : ''}
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Slug Generation
+        function generateSlug() {
+            const nombre = document.getElementById('nombre_comercial').value;
+            const slug = nombre.toString().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+                .replace(/\s+/g, '-')           // Replace spaces with -
+                .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                .replace(/^-+/, '')             // Trim - from start
+                .replace(/-+$/, '')             // Trim - from end
+                .toUpperCase();                 // Make it uppercase for code style
+
+            document.getElementById('codigo_cliente').value = slug;
+        }
+    </script>
+</body>
+
+</html>
