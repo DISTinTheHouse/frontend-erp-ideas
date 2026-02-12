@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrada a Producción</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6', // Violet 500
+                            600: '#7c3aed', // Violet 600
+                            700: '#6d28d9', // Violet 700
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(139, 92, 246, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Table Inputs */
+        .table-input {
+            @apply w-full bg-transparent border-none focus:ring-0 p-1 text-xs text-slate-700 dark:text-slate-200 text-right outline-none;
+        }
+
+        .table-input:focus {
+            @apply bg-brand-50 dark:bg-brand-500/20 rounded;
+        }
+
+        /* Input Focus Ring Animation */
+        .input-group:focus-within label {
+            color: #8b5cf6;
+        }
+    </style>
+
+    <!-- Theme Logic -->
+    <script>
+            (function () {
+                const root = document.documentElement;
+                function applySystemTheme() {
+                    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (isDark) {
+                        root.classList.add('dark');
+                        root.setAttribute('data-bs-theme', 'dark');
+                    } else {
+                        root.classList.remove('dark');
+                        root.setAttribute('data-bs-theme', 'light');
+                    }
+                }
+                applySystemTheme();
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+            })();
+    </script>
+</head>
+
+<body
+    class="bg-slate-50/80 dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 min-h-screen pb-32 transition-colors duration-300">
+
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-black/80 border-b border-slate-200/80 dark:border-white/10 supports-[backdrop-filter]:bg-white/60">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="#"
+                        class="group flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-500 hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-glow">
+                        <svg class="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white font-display tracking-tight">
+                            Entrada a Producción
+                        </h1>
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-2 w-2">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400" id="headerSubtitle">Módulo
+                                de Captura</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex flex-col items-end mr-2">
+                        <!-- Mode Badge Moved to Form -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Panel Principal -->
+        <div
+            class="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-soft dark:shadow-none p-6 md:p-8">
+
+            <!-- Formulario Encabezado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mb-8">
+
+                <!-- Tipo & Mode -->
+                <div class="input-group">
+                    <div class="flex items-center justify-between mb-1">
+                        <label
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 block">Tipo</label>
+                        <span id="modeBadge"
+                            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-brand-100 dark:bg-brand-500/10 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-500/20">
+                            OP
+                        </span>
+                    </div>
+                    <select id="tipoSelect"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                        <option value="E">Orden de Producción (E)</option>
+                        <option value="OB">Orden de Bordado (OB)</option>
+                        <option value="OR">Orden de Reflejante (OR)</option>
+                    </select>
+                </div>
+
+                <!-- Almacén -->
+                <div class="input-group">
+                    <label
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Almacén</label>
+                    <select id="almacenSelect"
+                        class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                        <option value="00">00 - Producto Terminado</option>
+                        <option value="001">001 - Apartado de Almacén</option>
+                        <option value="07">07 - Telas</option>
+                    </select>
+                </div>
+
+                <!-- Pedido -->
+                <div class="input-group">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Pedido
+                        Origen</label>
+                    <div class="relative">
+                        <input type="text" id="pedidoInput" placeholder="Buscar pedido (ej. P100)"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-xl pl-3 pr-10 py-2 text-sm text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-colors">
+                        <button type="button" id="btnBuscarPedido"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-500 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="pedidoStatus" class="text-[10px] mt-1 ml-1 h-4 text-slate-400"></p>
+                </div>
+
+                <!-- Número -->
+                <div class="input-group">
+                    <label
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Número</label>
+                    <input type="text" id="numeroInput" value="" placeholder="---" readonly
+                        class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm font-mono font-bold text-slate-500 dark:text-slate-400 outline-none">
+                </div>
+
+                <!-- Fecha -->
+                <div class="input-group">
+                    <label
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Fecha</label>
+                    <input type="date" id="fechaInput" readonly
+                        class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-500 dark:text-slate-400 outline-none cursor-not-allowed">
+                </div>
+
+                <!-- Vence -->
+                <div class="input-group">
+                    <label
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Vence</label>
+                    <input type="date" id="venceInput" readonly
+                        class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-500 dark:text-slate-400 outline-none cursor-not-allowed">
+                </div>
+
+                <!-- Proveedor -->
+                <div class="input-group lg:col-span-2 xl:col-span-4">
+                    <label
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Proveedor</label>
+                    <div class="relative">
+                        <select id="proveedorSelect"
+                            class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-colors appearance-none">
+                            <option value="">Seleccione un proveedor...</option>
+                        </select>
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Card (Replacing Agente) -->
+                <div class="input-group lg:col-span-2 xl:col-span-2">
+                    <label
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Captura</label>
+                    <div
+                        class="flex items-center gap-3 bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm">
+                        <div
+                            class="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-500/20 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-xs">
+                            JI
+                        </div>
+                        <div class="flex flex-col overflow-hidden">
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">Jesus Ibarra
+                                M.</span>
+                            <span class="text-[10px] text-slate-400 truncate">Lazzar - Suc. Toneles</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lote REMOVED -->
+                <!-- Dynamic Field REMOVED -->
+            </div>
+
+            <hr class="border-slate-100 dark:border-white/5 mb-8">
+
+            <!-- Captura Rápida -->
+            <div class="bg-slate-50 dark:bg-white/5 rounded-2xl p-4 border border-slate-100 dark:border-white/5 mb-6">
+                <div class="grid grid-cols-12 gap-4 items-end">
+                    <!-- Código -->
+                    <div class="col-span-12 md:col-span-2">
+                        <label
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Código</label>
+                        <input type="text" id="quickCode" placeholder="Enter para buscar"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm font-mono font-bold text-slate-700 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-span-12 md:col-span-6">
+                        <label
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Descripción</label>
+                        <input type="text" id="quickDesc" readonly
+                            class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-500 dark:text-slate-400 outline-none">
+                    </div>
+
+                    <!-- Cantidad REMOVED -->
+
+                    <!-- Pzas -->
+                    <div class="col-span-12 md:col-span-2">
+                        <label
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-1 block">Pzas</label>
+                        <input type="number" id="quickPzas" value="1"
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-right font-bold text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-all">
+                    </div>
+
+                    <!-- Agregar Botón -->
+                    <div class="col-span-12 md:col-span-1">
+                        <button id="btnAdd"
+                            class="w-full bg-brand-600 hover:bg-brand-700 text-white rounded-lg py-2 flex items-center justify-center transition-colors shadow-lg shadow-brand-500/30">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 mb-8">
+                <div class="overflow-y-auto max-h-[400px]">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 dark:bg-white/5 sticky top-0 z-10 backdrop-blur-md">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-left">
+                                    Código</th>
+                                <th
+                                    class="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-left w-1/3">
+                                    Descripción</th>
+                                <th
+                                    class="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">
+                                    Pzas</th>
+                                <th
+                                    class="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">
+                                    Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody" class="divide-y divide-slate-100 dark:divide-white/5">
+                            <!-- Rows will be injected here -->
+                            <tr id="emptyRow">
+                                <td colspan="4" class="px-4 py-8 text-center text-slate-400 text-sm italic">
+                                    No hay partidas agregadas
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Totales -->
+            <div class="flex flex-col items-end gap-2 border-t border-slate-100 dark:border-white/5 pt-6">
+                <div class="flex items-center gap-8 bg-slate-50 dark:bg-white/5 px-6 py-3 rounded-xl">
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total
+                        Piezas</span>
+                    <span id="lblTotalPzas"
+                        class="text-2xl font-bold text-brand-600 dark:text-brand-400 font-display">0</span>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="mt-10 flex justify-end gap-4">
+                <button id="btnCancel"
+                    class="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 font-medium transition-colors">
+                    Cancelar
+                </button>
+                <button id="btnOK"
+                    class="px-8 py-2.5 rounded-xl bg-slate-900 dark:bg-brand-600 text-white hover:bg-slate-800 dark:hover:bg-brand-500 font-bold shadow-lg shadow-brand-500/20 transition-all hover:-translate-y-0.5">
+                    Generar Entrada (OK)
+                </button>
+            </div>
+
+            <!-- JSON Output -->
+            <div id="jsonOutputContainer" class="hidden mt-8">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Salida JSON</h4>
+                <div class="bg-slate-900 rounded-xl p-4 overflow-hidden relative group">
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('jsonOutput').textContent)"
+                        class="absolute top-2 right-2 p-2 bg-white/10 hover:bg-white/20 rounded text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Copiar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                            </path>
+                        </svg>
+                    </button>
+                    <pre id="jsonOutput" class="font-mono text-xs text-emerald-400 whitespace-pre-wrap break-all"></pre>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Banner Notification -->
+    <div id="notificationBanner"
+        class="fixed top-0 left-0 w-full transform -translate-y-full transition-transform duration-500 z-50">
+        <div
+            class="bg-emerald-500 text-white px-6 py-4 shadow-xl flex items-center justify-between max-w-4xl mx-auto rounded-b-xl">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2 rounded-full">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">¡Orden Generada Exitosamente!</h3>
+                    <p class="text-white/90 text-sm">El documento ha sido procesado y enviado al sistema.</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-xs font-mono bg-white/10 px-2 py-1 rounded">Redirigiendo...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // Mock Database
+        const MOCK_PEDIDOS = ["P100", "P101", "P102"];
+        const CATALOGO = [
+            { codigo: "A10082+BLA+M", descripcion: "CAMISA MANGA LARGA OXFORD THAI - BLANCO - M" },
+            { codigo: "A11955+BLA+CH", descripcion: "PLAYERA POLO MANGA CORTA MICROPIQUE - BLANCO - CH" },
+            { codigo: "CH-001+AZ+G", descripcion: "CHAMARRA IMPERMEABLE FORRO POLAR - AZUL - G" },
+            { codigo: "PA-500+NE+32", descripcion: "PANTALON GABARDINA RECTO - NEGRO - 32" },
+            { codigo: "CH-SOFT+GR+XL", descripcion: "CHAMARRA SOFTSHELL EJECUTIVA - GRIS - XL" },
+            { codigo: "PA-CARGO+CA+34", descripcion: "PANTALON CARGO INDUSTRIAL - CAQUI - 34" },
+            { codigo: "HILO-001+NE", descripcion: "CONO HILO POLIESTER 5000M - NEGRO" },
+            { codigo: "BOTON-X", descripcion: "BOTON 4 OJILLOS STANDARD" }
+        ];
+
+        // Mock Pedido Content
+        const PEDIDO_ITEMS = {
+            "P100": [
+                { codigo: "A10082+BLA+M", descripcion: "CAMISA MANGA LARGA OXFORD THAI - BLANCO - M", pzas: 10 },
+                { codigo: "A11955+BLA+CH", descripcion: "PLAYERA POLO MANGA CORTA MICROPIQUE - BLANCO - CH", pzas: 5 },
+                { codigo: "CH-001+AZ+G", descripcion: "CHAMARRA IMPERMEABLE FORRO POLAR - AZUL - G", pzas: 2 }
+            ]
+        };
+
+        const PROVEEDORES = ["MAQUILAS TEXTILES SA DE CV", "BORDADOS EXPRESS", "INSUMOS Y TEXTILES DEL NORTE", "CONFECCIONES LAZZAR"];
+
+        let currentMode = 'E';
+        let items = [];
+
+        // Elements
+        const tipoSelect = document.getElementById('tipoSelect');
+        const modeBadge = document.getElementById('modeBadge');
+
+        // Populate Proveedores
+        const proveedorSelect = document.getElementById('proveedorSelect');
+        PROVEEDORES.forEach(p => {
+            const option = document.createElement('option');
+            option.value = p;
+            option.textContent = p;
+            proveedorSelect.appendChild(option);
+        });
+
+        // Pedido Elements
+        const pedidoInput = document.getElementById('pedidoInput');
+        const btnBuscarPedido = document.getElementById('btnBuscarPedido');
+        const pedidoStatus = document.getElementById('pedidoStatus');
+        const numeroInput = document.getElementById('numeroInput');
+
+        // Quick Entry Elements
+        const quickCode = document.getElementById('quickCode');
+        const quickDesc = document.getElementById('quickDesc');
+        const quickPzas = document.getElementById('quickPzas');
+        const btnAdd = document.getElementById('btnAdd');
+
+        // Totals Elements
+        const lblTotalPzas = document.getElementById('lblTotalPzas');
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaInput').value = today;
+            document.getElementById('venceInput').value = "2026-04-24";
+
+            handleModeChange();
+        });
+
+        // --- Pedido Search Logic ---
+
+        function buscarPedido() {
+            const val = pedidoInput.value.trim().toUpperCase();
+            if (!val) {
+                alert("Ingrese un número de pedido");
+                return;
+            }
+
+            // Simular loading
+            pedidoStatus.textContent = "Buscando...";
+            pedidoStatus.className = "text-[10px] mt-1 ml-1 h-4 text-blue-500 font-bold animate-pulse";
+
+            setTimeout(() => {
+                if (MOCK_PEDIDOS.includes(val)) {
+                    // Encontrado
+                    pedidoInput.classList.add('border-emerald-500', 'text-emerald-600', 'font-bold');
+                    pedidoInput.classList.remove('border-rose-500', 'text-rose-600');
+
+                    pedidoStatus.textContent = "✓ Pedido encontrado.";
+                    pedidoStatus.className = "text-[10px] mt-1 ml-1 h-4 text-emerald-500 font-bold";
+
+                    // Asignar número de orden
+                    numeroInput.value = "E104355";
+                    numeroInput.classList.add('text-brand-600', 'bg-brand-50', 'dark:text-brand-400', 'dark:bg-brand-500/10');
+
+                    // Cargar partidas del pedido si existen
+                    if (PEDIDO_ITEMS[val]) {
+                        // Limpiar items actuales
+                        items = [];
+                        // Clonar items del pedido para evitar referencias y establecer maxPzas
+                        items = JSON.parse(JSON.stringify(PEDIDO_ITEMS[val])).map(item => ({
+                            ...item,
+                            maxPzas: item.pzas // Establecer límite original
+                        }));
+                        renderTable();
+                        updateTotals();
+                    }
+
+                } else {
+                    // No encontrado
+                    pedidoInput.classList.add('border-rose-500', 'text-rose-600');
+                    pedidoInput.classList.remove('border-emerald-500', 'text-emerald-600', 'font-bold');
+
+                    pedidoStatus.textContent = "✕ Pedido no encontrado";
+                    pedidoStatus.className = "text-[10px] mt-1 ml-1 h-4 text-rose-500 font-bold";
+
+                    numeroInput.value = "";
+                    numeroInput.classList.remove('text-brand-600', 'bg-brand-50', 'dark:text-brand-400', 'dark:bg-brand-500/10');
+                }
+            }, 500);
+        }
+
+        btnBuscarPedido.addEventListener('click', buscarPedido);
+        pedidoInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                buscarPedido();
+            }
+        });
+
+        // Mode Switching
+        tipoSelect.addEventListener('change', handleModeChange);
+
+        function handleModeChange() {
+            currentMode = tipoSelect.value;
+
+            if (currentMode === 'OB') {
+                modeBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20";
+                document.getElementById('btnOK').textContent = "Generar Orden OB";
+            } else if (currentMode === 'OR') {
+                modeBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20";
+                document.getElementById('btnOK').textContent = "Generar Orden OR";
+            } else {
+                modeBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-brand-100 dark:bg-brand-500/10 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-500/20";
+                document.getElementById('btnOK').textContent = "Generar Orden Producción";
+            }
+
+            modeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current"></span>${currentMode}`;
+        }
+
+        // Quick Entry Logic
+        quickCode.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchItem();
+            }
+        });
+
+        function searchItem() {
+            const code = quickCode.value.trim().toUpperCase();
+            const item = CATALOGO.find(i => i.codigo === code);
+
+            if (item) {
+                quickDesc.value = item.descripcion;
+                quickPzas.focus();
+            } else {
+                alert("Producto no encontrado");
+                quickDesc.value = "";
+            }
+        }
+
+        quickPzas.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') btnAdd.focus();
+        });
+
+        btnAdd.addEventListener('click', () => {
+            if (!quickCode.value || !quickDesc.value) {
+                alert("Ingrese un código válido");
+                return;
+            }
+
+            const pzas = parseFloat(quickPzas.value) || 0;
+
+            const newItem = {
+                id: Date.now(),
+                codigo: quickCode.value.toUpperCase(),
+                descripcion: quickDesc.value,
+                pzas: pzas,
+                maxPzas: pzas // Manual entry establishes the max allowed
+            };
+
+            items.push(newItem);
+            renderTable();
+            clearQuickEntry();
+        });
+
+        function clearQuickEntry() {
+            quickCode.value = "";
+            quickDesc.value = "";
+            quickPzas.value = "1";
+            quickCode.focus();
+        }
+
+        // Table Logic
+        function renderTable() {
+            const tbody = document.getElementById('itemsTableBody');
+            tbody.innerHTML = '';
+
+            if (items.length === 0) {
+                tbody.innerHTML = `
+                    <tr id="emptyRow">
+                        <td colspan="4" class="px-4 py-8 text-center text-slate-400 text-sm italic">
+                            No hay partidas agregadas
+                        </td>
+                    </tr>
+                `;
+            } else {
+                items.forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group";
+                    tr.innerHTML = `
+                        <td class="px-4 py-2 text-xs font-mono font-bold text-slate-600 dark:text-slate-300">${item.codigo}</td>
+                        <td class="px-4 py-2 text-xs text-slate-500 dark:text-slate-400">${item.descripcion}</td>
+                        <td class="px-4 py-2">
+                            <input type="number" class="w-full bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none focus:ring-1 focus:ring-brand-500 rounded px-1" value="${item.pzas}" onchange="updateItem(${index}, 'pzas', this.value)">
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                            <button onclick="removeItem(${index})" class="text-slate-400 hover:text-rose-500 transition-colors p-1 opacity-0 group-hover:opacity-100">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+            updateTotals();
+        }
+
+        window.updateItem = (index, field, value) => {
+            let val = parseFloat(value) || 0;
+            const item = items[index];
+
+            if (field === 'pzas') {
+                if (item.maxPzas !== undefined && val > item.maxPzas) {
+                    alert(`No puede aumentar las piezas más allá del original (${item.maxPzas}).`);
+                    val = item.maxPzas;
+                }
+            }
+
+            items[index][field] = val;
+            renderTable(); // Re-render to update totals
+        };
+
+        window.removeItem = (index) => {
+            items.splice(index, 1);
+            renderTable();
+        };
+
+        // Totals Calculation
+        function updateTotals() {
+            let totalPzas = 0;
+
+            items.forEach(item => {
+                totalPzas += item.pzas;
+            });
+
+            // UI Updates
+            lblTotalPzas.textContent = totalPzas;
+        }
+
+        // Actions
+        document.getElementById('btnCancel').addEventListener('click', () => {
+            if (confirm('¿Está seguro de limpiar todo el formulario?')) {
+                items = [];
+                renderTable();
+                document.getElementById('proveedorSelect').value = '';
+                document.getElementById('pedidoInput').value = '';
+                document.getElementById('jsonOutputContainer').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('btnOK').addEventListener('click', () => {
+            if (items.length === 0) {
+                alert('Debe agregar al menos una partida.');
+                return;
+            }
+            if (!document.getElementById('fechaInput').value) {
+                alert('La fecha es requerida.');
+                return;
+            }
+
+            // Simulate Success
+            const banner = document.getElementById('notificationBanner');
+            banner.classList.remove('-translate-y-full');
+
+            // Disable button to prevent double submit
+            const btn = document.getElementById('btnOK');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Procesando...`;
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        });
+
+    </script>
+</body>
+
+</html>

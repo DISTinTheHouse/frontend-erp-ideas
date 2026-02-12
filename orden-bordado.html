@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Digital Embroidery Order Form</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7C3AED", // Vibrant purple from reference
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#0F1115",
+                        "card-dark": "#16181D",
+                        "border-dark": "#2D3139",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "12px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hotspot {
+            @apply absolute w-6 h-6 flex items-center justify-center bg-yellow-400 text-black text-[10px] font-bold rounded-md shadow-lg border border-yellow-600;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2D3139;
+            border-radius: 10px;
+        }
+
+        .gradient-btn {
+            background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen p-4 md:p-8 transition-colors duration-200">
+    <div class="max-w-[1440px] mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></span>
+                    <h1 class="text-2xl font-bold tracking-tight">Orden de Bordado</h1>
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Captura y Seguimiento de Producción</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col items-end mr-4">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Estatus Actual</span>
+                    <span
+                        class="px-3 py-1 bg-yellow-400/10 text-yellow-500 border border-yellow-500/20 rounded text-xs font-bold">CAPTURANDO</span>
+                </div>
+                <a type="button" href="/ventas_pedidos.html"
+                    class="gradient-btn px-6 py-2.5 rounded-full text-white font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/20">
+                    <span class="material-icons text-sm">check</span>
+                    Guardar Orden de Bordado
+                </a>
+            </div>
+        </header>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-3 space-y-6">
+                <div
+                    class="bg-white dark:bg-card-dark p-5 rounded-2xl border border-slate-200 dark:border-border-dark shadow-sm">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Validaciones Obligatorias
+                    </h3>
+                    <div class="space-y-4">
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input
+                                class="mt-1 rounded border-slate-300 dark:border-border-dark bg-transparent text-primary focus:ring-primary"
+                                type="checkbox" />
+                            <span
+                                class="text-xs leading-relaxed text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                                Acepto posiciones, tamaños y colores. <span class="text-red-500 font-semibold">*Una vez
+                                    aceptado no se realizan cambios.</span>
+                            </span>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input
+                                class="mt-1 rounded border-slate-300 dark:border-border-dark bg-transparent text-primary focus:ring-primary"
+                                type="checkbox" />
+                            <span
+                                class="text-xs leading-relaxed text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                                ¿Lleva personalizado? (Ver hoja 3 de bordados)
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-card-dark p-5 rounded-2xl border border-slate-200 dark:border-border-dark shadow-sm">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Contraste de Bordado</h3>
+                    <p class="text-xs text-slate-500 mb-4">¿El bordado se pierde en las prendas?</p>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input
+                                class="text-primary focus:ring-primary bg-transparent border-slate-300 dark:border-border-dark"
+                                name="contrast" type="radio" />
+                            <span class="text-xs">No se pierde</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input
+                                class="text-primary focus:ring-primary bg-transparent border-slate-300 dark:border-border-dark"
+                                name="contrast" type="radio" />
+                            <span class="text-xs">Sí, cliente de acuerdo</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input
+                                class="text-primary focus:ring-primary bg-transparent border-slate-300 dark:border-border-dark"
+                                name="contrast" type="radio" />
+                            <span class="text-xs">Sí, cambiar a:</span>
+                        </label>
+                        <input
+                            class="w-full bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-border-dark rounded-lg text-xs py-2 px-3 focus:ring-primary focus:border-primary"
+                            placeholder="Código de color alternativo..." type="text" />
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-card-dark p-5 rounded-2xl border border-slate-200 dark:border-border-dark shadow-sm">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Observaciones Adicionales
+                    </h3>
+                    <textarea
+                        class="w-full bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-border-dark rounded-xl text-sm p-3 focus:ring-primary focus:border-primary"
+                        placeholder="Instrucciones especiales para el bordador..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="lg:col-span-9 space-y-6">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div
+                        class="bg-white dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-border-dark relative overflow-hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-sm font-bold flex items-center gap-2">
+                                <span class="material-icons text-slate-400 text-lg">checkroom</span>
+                                Ubicaciones (Hotspots)
+                            </h2>
+                            <div class="flex gap-2">
+                                <button
+                                    class="p-1.5 hover:bg-slate-100 dark:hover:bg-background-dark rounded transition-colors">
+                                    <span class="material-icons text-sm">zoom_in</span>
+                                </button>
+                                <button
+                                    class="p-1.5 hover:bg-slate-100 dark:hover:bg-background-dark rounded transition-colors">
+                                    <span class="material-icons text-sm">refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div
+                            class="relative w-full aspect-[3/3] bg-slate-50 dark:bg-background-dark/50 rounded-xl flex items-center justify-center p-4 flex-col">
+                            <div class="relative w-full h-full opacity-60 dark:invert transition-all duration-300">
+                                <img alt="Shirt schematic mockup"
+                                    class="absolute top-0 left-1/2 -translate-x-1/2 w-50 h-48 object-contain"
+                                    src="Imagen1.jpg" />
+                                <img alt="Pants schematic mockup"
+                                    class="absolute bottom-0 left-1/2 -translate-x-1/2 w-80 h-60 object-contain"
+                                    src="/Imagen2.jpg" />
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 mt-4 gap-2">
+                                <div class="hotspot top-12 left-[calc(50%-60px)]" title="Frente Izquierdo"><small>A (Frente Izquierdo)</small></div>
+                                <div class="hotspot top-12 left-[calc(50%+40px)]" title="Frente Derecho"><small>B (Frente Derecho)</small></div>
+                                <div class="hotspot top-10 left-[calc(50%-100px)]" title="Manga Derecha"><small>C (Manga Derecha)</small></div>
+                                <div class="hotspot top-10 left-[calc(50%+80px)]" title="Manga Izquierda"><small>D (Manga Izquierda)</small></div>
+                                <div class="hotspot top-10 left-[calc(50%+80px)]" title="Pecho Centro"><small>E (Frente Centro)</small></div>
+                                <div class="hotspot top-10 left-[calc(50%+80px)]" title="Espalda Alta"><small>F (Espalda Alta)</small></div>
+                                <div class="hotspot bottom-32 left-[calc(50%-40px)]" title="Pantalón Izquierdo"><small>K (Frente Izquierdo Pantalón)</small></div>
+                                <div class="hotspot bottom-32 left-[calc(50%+20px)]" title="Pantalón Derecho"><small>L (Frente Derecho Pantalón)</small></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-border-dark flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-sm font-bold flex items-center gap-2">
+                                <span class="material-icons text-slate-400 text-lg">settings</span>
+                                Especificación por Ubicación
+                            </h2>
+                            <button class="text-xs font-semibold text-primary hover:underline">Limpiar Todo</button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2 max-h-[500px]">
+                            <div
+                                class="p-4 bg-slate-50 dark:bg-background-dark rounded-xl border border-slate-200 dark:border-border-dark">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span
+                                        class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <span
+                                            class="w-6 h-6 flex items-center justify-center bg-primary text-white rounded text-[10px]">A</span>
+                                        Frente Izquierdo
+                                    </span>
+                                    <button
+                                        class="material-icons text-slate-400 hover:text-red-500 transition-colors text-sm">delete</button>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-500 uppercase font-bold">Medidas
+                                            (cm)</label>
+                                        <input
+                                            class="w-full bg-white dark:bg-card-dark border-slate-200 dark:border-border-dark rounded-lg text-xs py-2 focus:ring-primary"
+                                            placeholder="Ej. 10 x 5" type="text" />
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-500 uppercase font-bold">Colores de
+                                            Hilo</label>
+                                        <input
+                                            class="w-full bg-white dark:bg-card-dark border-slate-200 dark:border-border-dark rounded-lg text-xs py-2 focus:ring-primary"
+                                            placeholder="Ej. 1148, 1202" type="text" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="p-4 bg-slate-50 dark:bg-background-dark rounded-xl border border-slate-200 dark:border-border-dark">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span
+                                        class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <span
+                                            class="w-6 h-6 flex items-center justify-center bg-primary text-white rounded text-[10px]">F</span>
+                                        Espalda Alta
+                                    </span>
+                                    <button
+                                        class="material-icons text-slate-400 hover:text-red-500 transition-colors text-sm">delete</button>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-500 uppercase font-bold">Medidas
+                                            (cm)</label>
+                                        <input
+                                            class="w-full bg-white dark:bg-card-dark border-slate-200 dark:border-border-dark rounded-lg text-xs py-2 focus:ring-primary"
+                                            placeholder="Ej. 28 x 12" type="text" />
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-500 uppercase font-bold">Colores de
+                                            Hilo</label>
+                                        <input
+                                            class="w-full bg-white dark:bg-card-dark border-slate-200 dark:border-border-dark rounded-lg text-xs py-2 focus:ring-primary"
+                                            placeholder="Ej. 1002" type="text" />
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-border-dark rounded-xl text-slate-400 hover:text-primary hover:border-primary transition-all flex flex-col items-center gap-1 group">
+                                <span
+                                    class="material-icons group-hover:scale-110 transition-transform">add_circle_outline</span>
+                                <span class="text-xs font-semibold">Agregar Nueva Ubicación</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-border-dark">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-sm font-bold flex items-center gap-2">
+                            <span class="material-icons text-slate-400 text-lg">palette</span>
+                            Catálogo de Colores de Hilo
+                        </h2>
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <span
+                                    class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                                <input
+                                    class="pl-9 pr-4 py-1.5 bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-border-dark rounded-full text-xs focus:ring-primary w-40"
+                                    placeholder="Buscar código..." type="text" />
+                            </div>
+                            <button class="text-xs font-semibold text-slate-500">Ver Todos</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#FF0000] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1002</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#800000] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1004</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#FFC0CB] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1174</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#0000FF] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1256</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#ADD8E6] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1176</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#008000] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1202</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#FFFF00] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1388</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#FFA500] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1206</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#800080] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1360</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#A52A2A] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1009</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#FFFFFF] border border-black/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1001</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 group cursor-pointer">
+                            <div
+                                class="w-full h-8 rounded-sm shadow-inner bg-[#000000] border border-white/10 group-hover:ring-2 ring-primary transition-all">
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500">1148</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button
+        class="fixed bottom-4 right-6 p-4 bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark rounded-full shadow-2xl z-50 hover:scale-110 transition-transform"
+        onclick="document.documentElement.classList.toggle('dark')">
+        <span class="material-icons dark:hidden text-slate-600">dark_mode</span>
+        <span class="material-icons hidden dark:block text-yellow-400">light_mode</span>
+    </button>
+
+</body>
+
+</html>
