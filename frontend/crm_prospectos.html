@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prospectos - ERP UI</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Theme auto -->
+    <script>
+        (function () {
+            const root = document.documentElement;
+
+            function applySystemTheme() {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) {
+                    root.classList.add('dark');
+                    root.setAttribute('data-bs-theme', 'dark');
+                } else {
+                    root.classList.remove('dark');
+                    root.setAttribute('data-bs-theme', 'light');
+                }
+            }
+
+            applySystemTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+        })();
+    </script>
+
+    <!-- Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 3px;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    transitionProperty: {
+                        'width': 'width'
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e', // Rose-500 for CRM theme
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(244, 63, 94, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 h-screen overflow-hidden flex selection:bg-rose-500 selection:text-white antialiased">
+
+    <!-- Background Gradients -->
+    <div
+        class="pointer-events-none fixed inset-0 z-0
+              bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-rose-500/5 via-transparent to-transparent opacity-50">
+    </div>
+
+    <!-- SIDEBAR (Desktop) -->
+    <aside class="hidden md:flex flex-col h-full z-40 relative
+                w-20 hover:w-72 group/sidebar
+                bg-white dark:bg-slate-900
+                border-r border-slate-200 dark:border-white/5
+                transition-all duration-300 ease-in-out shadow-xl shadow-slate-900/5">
+
+        <!-- Logo Section -->
+        <div
+            class="h-20 flex items-center px-6 shrink-0 overflow-hidden relative border-b border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center gap-4 min-w-max">
+                <a href="principal.html" class="shrink-0 text-rose-600 dark:text-rose-400">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="4.706" cy="16" r="4.706" class="fill-current opacity-80" />
+                        <circle cx="16.001" cy="4.706" r="4.706" class="fill-current opacity-80" />
+                        <circle cx="16.001" cy="27.294" r="4.706" class="fill-current opacity-80" />
+                        <circle cx="27.294" cy="16" r="4.706" class="fill-current opacity-80" />
+                    </svg>
+                </a>
+                <span
+                    class="brand-font font-bold text-xl tracking-tight opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100 whitespace-nowrap">
+                    ERP System
+                </span>
+            </div>
+        </div>
+
+        <!-- Navigation Items -->
+        <nav class="flex-1 overflow-y-auto no-scrollbar py-6 px-3 space-y-1">
+
+            <!-- 1. Panel de Control -->
+            <a href="principal.html"
+                class="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors group relative">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                    </path>
+                </svg>
+                <span
+                    class="font-medium text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 absolute left-14">Panel
+                    de Control</span>
+            </a>
+
+            <!-- 2. CRM y Ventas (Active) -->
+            <a href="crm_dashboard.html"
+                class="flex items-center gap-4 px-3 py-3 rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 transition-colors group relative">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+                <span
+                    class="font-medium text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 absolute left-14">CRM
+                    y Ventas</span>
+            </a>
+
+            <!-- 3. Operaciones de Almacén -->
+            <a href="#"
+                class="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors group relative">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+                <span
+                    class="font-medium text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 absolute left-14">Almacén
+                    (WMS)</span>
+            </a>
+
+            <!-- Other modules... -->
+            <a href="#"
+                class="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors group relative">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+                <span
+                    class="font-medium text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 absolute left-14">Compras</span>
+            </a>
+
+        </nav>
+
+        <!-- Bottom Actions -->
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+            <button class="w-full mt-2 flex items-center justify-start gap-4 px-3 py-3 rounded-xl 
+                       text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 
+                       transition-colors group relative overflow-hidden">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                <span
+                    class="font-medium text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 absolute left-14">Cerrar
+                    sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MOBILE HEADER -->
+    <header
+        class="md:hidden fixed top-0 left-0 w-full h-16 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 z-50">
+        <div class="flex items-center gap-3">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="4.706" cy="16" r="4.706" class="fill-rose-600 dark:fill-rose-400" />
+                <circle cx="16.001" cy="4.706" r="4.706" class="fill-rose-600 dark:fill-rose-400" />
+                <circle cx="16.001" cy="27.294" r="4.706" class="fill-rose-600 dark:fill-rose-400" />
+                <circle cx="27.294" cy="16" r="4.706" class="fill-rose-600 dark:fill-rose-400" />
+            </svg>
+            <span class="brand-font font-bold text-lg text-slate-900 dark:text-white">CRM</span>
+        </div>
+        <button id="mobileMenuBtn" class="p-2 text-slate-600 dark:text-slate-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                </path>
+            </svg>
+        </button>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col relative overflow-hidden h-full bg-slate-50/50 dark:bg-slate-950">
+
+        <!-- TOPBAR -->
+        <header class="hidden md:flex h-16 items-center justify-between px-6 
+                       bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl 
+                       border-b border-slate-200 dark:border-white/5 
+                       sticky top-0 z-30 transition-all">
+
+            <!-- Left: Context Title -->
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col">
+                    <span
+                        class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Módulo
+                        Comercial</span>
+                    <h2
+                        class="text-lg font-semibold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                        Prospectos
+                        <span
+                            class="px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-bold border border-rose-100 dark:border-rose-500/20">Listado</span>
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Center: Global Search -->
+            <div class="flex-1 max-w-lg mx-12">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-slate-400 group-focus-within:text-rose-500 transition-colors"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text"
+                        class="block w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700/50 rounded-lg leading-5 bg-slate-100/50 dark:bg-slate-800/50 text-slate-300 placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-1 focus:ring-rose-500/50 focus:border-rose-500/50 sm:text-sm transition-all"
+                        placeholder="Buscar prospectos... (Cmd+K)">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <span
+                            class="text-slate-500 text-xs border border-slate-300 dark:border-slate-600 rounded px-1.5 py-0.5">⌘K</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Actions & Profile -->
+            <div class="flex items-center gap-4">
+                <button
+                    class="relative p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-white/5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+                </button>
+                <div class="flex items-center gap-3 pl-2 cursor-pointer group">
+                    <div class="text-right hidden lg:block">
+                        <p class="text-sm font-medium text-slate-700 dark:text-slate-200">Admin User</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Director Comercial</p>
+                    </div>
+                    <div
+                        class="h-9 w-9 rounded-full bg-gradient-to-br from-rose-500 to-orange-600 ring-2 ring-white dark:ring-slate-800 shadow-lg shadow-rose-500/20 flex items-center justify-center text-white font-bold text-xs">
+                        AU
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="flex-1 w-full overflow-y-auto px-6 pb-6 md:px-8 md:pb-8 pt-6 custom-scrollbar">
+
+            <!-- Module Navigation (Tabs) -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div
+                    class="flex overflow-x-auto space-x-1 pb-1 no-scrollbar border-b border-slate-200 dark:border-slate-800 w-full md:w-auto">
+                    <a href="crm_dashboard.html"
+                        class="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-t-lg transition-all whitespace-nowrap">
+                        Dashboard
+                    </a>
+                    <a href="#"
+                        class="px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 border-b-2 border-rose-600 dark:border-rose-500 whitespace-nowrap bg-rose-50/50 dark:bg-rose-500/5 rounded-t-lg">
+                        Prospectos
+                    </a>
+                    <a href="#"
+                        class="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-t-lg transition-all whitespace-nowrap">
+                        Cotizaciones
+                    </a>
+                    <a href="#"
+                        class="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-t-lg transition-all whitespace-nowrap">
+                        Pedidos
+                    </a>
+                    <a href="#"
+                        class="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-t-lg transition-all whitespace-nowrap">
+                        Calendario
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0">
+                    <button
+                        class="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-sm font-medium shadow-lg shadow-rose-600/20 hover:shadow-rose-600/30 transition-all transform hover:-translate-y-0.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        Nuevo Prospecto
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Mini Cards for Prospects Context -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div
+                    class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
+                    <p class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Total Prospectos</p>
+                    <p class="text-2xl font-bold text-slate-800 dark:text-white">1,248</p>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
+                    <p class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Nuevos (Mes)</p>
+                    <div class="flex items-center gap-2">
+                        <p class="text-2xl font-bold text-slate-800 dark:text-white">142</p>
+                        <span
+                            class="text-xs text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center">
+                            <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                            </svg>
+                            12%
+                        </span>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
+                    <p class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Por Contactar</p>
+                    <p class="text-2xl font-bold text-rose-500">28</p>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
+                    <p class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Tasa Conversión</p>
+                    <p class="text-2xl font-bold text-slate-800 dark:text-white">24.5%</p>
+                </div>
+            </div>
+
+            <!-- Main Content Card -->
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm flex flex-col h-[calc(100vh-280px)]">
+
+                <!-- Toolbar -->
+                <div
+                    class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <!-- Filters Left -->
+                    <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar">
+                        <div class="relative">
+                            <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" placeholder="Filtrar..."
+                                class="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-rose-500 w-40 sm:w-64 transition-all">
+                        </div>
+
+                        <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+                        <button
+                            class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                                </path>
+                            </svg>
+                            Estado
+                        </button>
+                        <button
+                            class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            Fecha Creación
+                        </button>
+                    </div>
+
+                    <!-- Actions Right -->
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+                            <button class="p-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-rose-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                            <button class="p-1.5 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                        <button class="p-2 text-slate-500 hover:text-rose-600 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="flex-1 overflow-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10">
+                            <tr>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 w-10">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-rose-500 focus:ring-rose-500 bg-transparent">
+                                </th>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                                    Prospecto</th>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                                    Empresa / Cargo</th>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                                    Estado</th>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 text-right">
+                                    Valor Est.</th>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                                    Origen</th>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 text-right">
+                                    Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Row 1 -->
+                            <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-rose-500 focus:ring-rose-500 bg-transparent">
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400 text-xs font-bold">
+                                            JM
+                                        </div>
+                                        <div>
+                                            <a href="crm_detalle_prospecto.html"
+                                                class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 transition-colors hover:underline">
+                                                Juan Martínez</a>
+                                            <p class="text-xs text-slate-500">juan.mtz@techsolutions.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <p class="text-sm text-slate-700 dark:text-slate-300">Tech Solutions SA</p>
+                                    <p class="text-xs text-slate-500">CTO</p>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                        Interesado
+                                    </span>
+                                </td>
+                                <td
+                                    class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right font-mono text-sm text-slate-700 dark:text-slate-300">
+                                    $45,000
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">LinkedIn</span>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right">
+                                    <button class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Row 2 -->
+                            <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-rose-500 focus:ring-rose-500 bg-transparent">
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <div class="flex items-center gap-3">
+                                        <img src="https://i.pravatar.cc/150?u=2" alt="" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <a href="crm_detalle_prospecto.html"
+                                                class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 transition-colors hover:underline">
+                                                Ana Lopez</a>
+                                            <p class="text-xs text-slate-500">ana.lopez@comercial.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <p class="text-sm text-slate-700 dark:text-slate-300">Grupo Comercial</p>
+                                    <p class="text-xs text-slate-500">Gerente Compras</p>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></span>
+                                        Nuevo
+                                    </span>
+                                </td>
+                                <td
+                                    class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right font-mono text-sm text-slate-700 dark:text-slate-300">
+                                    $12,500
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Web</span>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right">
+                                    <button class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Row 3 -->
+                            <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-rose-500 focus:ring-rose-500 bg-transparent">
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 text-xs font-bold">
+                                            CR
+                                        </div>
+                                        <div>
+                                            <a href="crm_detalle_prospecto.html"
+                                                class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 transition-colors hover:underline">
+                                                Carlos Ruiz</a>
+                                            <p class="text-xs text-slate-500">carlos@ruiz.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <p class="text-sm text-slate-700 dark:text-slate-300">Consultoría Ruiz</p>
+                                    <p class="text-xs text-slate-500">Director</p>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                        Contactado
+                                    </span>
+                                </td>
+                                <td
+                                    class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right font-mono text-sm text-slate-700 dark:text-slate-300">
+                                    $8,200
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Referido</span>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right">
+                                    <button class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 4 -->
+                            <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <input type="checkbox"
+                                        class="rounded border-slate-300 text-rose-500 focus:ring-rose-500 bg-transparent">
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <div class="flex items-center gap-3">
+                                        <img src="https://i.pravatar.cc/150?u=5" alt="" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <a href="crm_detalle_prospecto.html"
+                                                class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 transition-colors hover:underline">Sofia
+                                                Mendez</a>
+                                            <p class="text-xs text-slate-500">sofia@innovacion.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <p class="text-sm text-slate-700 dark:text-slate-300">Innovación Global</p>
+                                    <p class="text-xs text-slate-500">VP Ventas</p>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5 animate-pulse"></span>
+                                        Negociación
+                                    </span>
+                                </td>
+                                <td
+                                    class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right font-mono text-sm text-slate-700 dark:text-slate-300">
+                                    $120,000
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50">
+                                    <span
+                                        class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Evento</span>
+                                </td>
+                                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800/50 text-right">
+                                    <button class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Mostrando <span class="font-medium text-slate-900 dark:text-white">1</span> a <span
+                            class="font-medium text-slate-900 dark:text-white">10</span> de <span
+                            class="font-medium text-slate-900 dark:text-white">1,248</span> resultados
+                    </p>
+                    <div class="flex gap-2">
+                        <button
+                            class="px-3 py-1 text-xs font-medium text-slate-500 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50">
+                            Anterior
+                        </button>
+                        <button
+                            class="px-3 py-1 text-xs font-medium text-slate-500 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700">
+                            Siguiente
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>
