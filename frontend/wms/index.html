@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operaciones de Almacén (WMS)</title>
+
+    <!-- TailwindCSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Comentario: Tipografías + scroll -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, .55);
+            border-radius: 999px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    boxShadow: { soft: '0 12px 36px -18px rgba(15, 23, 42, 0.45)' }
+                }
+            }
+        }
+    </script>
+
+    <!-- Comentario: Dark mode auto + toggle -->
+    <script>
+            (function () {
+                const root = document.documentElement;
+                const key = 'erp-theme';
+                function apply(mode) {
+                    const isDark = mode === 'dark';
+                    root.classList.toggle('dark', isDark);
+                    root.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+                }
+                const saved = localStorage.getItem(key);
+                const preferred = (saved === 'dark' || saved === 'light')
+                    ? saved
+                    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                apply(preferred);
+                window.__erpTheme = {
+                    toggle() {
+                        const cur = root.classList.contains('dark') ? 'dark' : 'light';
+                        const next = cur === 'dark' ? 'light' : 'dark';
+                        localStorage.setItem(key, next);
+                        apply(next);
+                    }
+                };
+            })();
+    </script>
+</head>
+
+<body
+    class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
+    <!-- Comentario: Fondo ambiental sutil -->
+    <div class="pointer-events-none fixed inset-0 z-0">
+        <div class="absolute -top-24 -right-24 w-[520px] h-[520px] bg-emerald-500/10 blur-3xl rounded-full"></div>
+        <div class="absolute -bottom-32 -left-24 w-[520px] h-[520px] bg-sky-500/10 blur-3xl rounded-full"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.06),_transparent_55%)]">
+        </div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex flex-col">
+        <!-- HEADER -->
+        <header
+            class="sticky top-0 z-30 bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border-b border-slate-200/70 dark:border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
+                <div
+                    class="h-10 w-10 rounded-xl bg-emerald-600/10 text-emerald-600 dark:text-emerald-300 dark:bg-emerald-500/10 border border-emerald-200/40 dark:border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                </div>
+
+                <div class="min-w-0">
+                    <h1 class="brand-font text-lg sm:text-xl font-semibold tracking-tight">Operaciones de Almacén (WMS)
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block">Dashboard operativo
+                        para existencias y movimientos</p>
+                </div>
+
+                <div class="flex-1 hidden lg:block max-w-xl mx-6">
+                    <!-- Comentario: Buscador global -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input id="globalSearch" type="text"
+                            class="w-full pl-10 pr-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                            placeholder="Buscar producto, SKU, ubicación, referencia...">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.__erpTheme.toggle()"
+                        class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                        aria-label="Cambiar tema">
+                        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            </path>
+                        </svg>
+                        <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z">
+                            </path>
+                        </svg>
+                    </button>
+                    <button id="btnNuevoMovimiento" type="button"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        Nuevo movimiento
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6 overflow-y-auto custom-scrollbar">
+            <!-- CARDS PRINCIPALES -->
+            <section class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                <!-- Comentario: Cards grandes con acciones rápidas -->
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200/40 dark:border-emerald-500/20 flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="brand-font font-semibold">Existencias</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Consulta inventario por
+                                    producto, almacén y ubicación</p>
+                            </div>
+                        </div>
+                        <span
+                            class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-100/70 dark:border-emerald-500/15 text-[11px] font-bold"
+                            title="Estado del inventario">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Live
+                        </span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex items-baseline gap-2">
+                            <span id="kpiSkus" class="text-2xl font-bold font-mono">—</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">SKUs</span>
+                        </div>
+                        <button type="button"
+                            class="jumpBtn text-sm font-semibold text-emerald-700 dark:text-emerald-300 hover:text-emerald-600 transition-colors"
+                            data-jump="existencias">Ver</button>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                        <button id="btnQuickLowStock" type="button"
+                            class="px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-xs font-semibold shadow-lg shadow-emerald-600/15">Bajo
+                            stock</button>
+                        <button type="button" id="btnHistRapido"
+                            class="px-3 py-2 rounded-lg bg-slate-900/5 dark:bg-white/5 hover:bg-emerald-500/10 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-xs font-semibold text-slate-700 dark:text-slate-200">Ver
+                            historial</button>
+                    </div>
+                </div>
+
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-5">
+                    <h3 class="brand-font font-semibold">Entradas</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Registrar ingreso de inventario</p>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                        <button type="button"
+                            class="jumpBtn px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-xs font-semibold"
+                            data-jump="entradas">Ir a Entradas</button>
+                        <button type="button"
+                            class="btnOpenProductModal px-3 py-2 rounded-lg bg-slate-900/5 dark:bg-white/5 hover:bg-emerald-500/10 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-xs font-semibold"
+                            data-context="entrada">Agregar producto</button>
+                    </div>
+                    <p class="mt-4 text-xs text-slate-500 dark:text-slate-400">Tip: Doble click en el modal agrega
+                        rápido.</p>
+                </div>
+
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-5">
+                    <h3 class="brand-font font-semibold">Salidas</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Registrar salida (valida stock)</p>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                        <button type="button"
+                            class="jumpBtn px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-xs font-semibold"
+                            data-jump="salidas">Ir a Salidas</button>
+                        <button type="button"
+                            class="btnOpenProductModal px-3 py-2 rounded-lg bg-slate-900/5 dark:bg-white/5 hover:bg-emerald-500/10 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-xs font-semibold"
+                            data-context="salida">Agregar producto</button>
+                    </div>
+                    <p class="mt-4 text-xs text-slate-500 dark:text-slate-400">Bloquea guardar si hay stock
+                        insuficiente.</p>
+                </div>
+
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-5">
+                    <h3 class="brand-font font-semibold">Ajustes</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Corregir diferencias de inventario</p>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                        <button type="button"
+                            class="jumpBtn px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-xs font-semibold"
+                            data-jump="ajustes">Ir a Ajustes</button>
+                        <button id="btnMotivos" type="button"
+                            class="px-3 py-2 rounded-lg bg-slate-900/5 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 text-xs font-semibold text-slate-700 dark:text-slate-200"
+                            title="Conteo físico • Merma • Error sistema • Producto dañado">Motivos</button>
+                    </div>
+                    <p class="mt-4 text-xs text-slate-500 dark:text-slate-400">Motivo obligatorio para auditoría.</p>
+                </div>
+            </section>
+
+            <!-- TABS -->
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                    <!-- Comentario: Tabs de navegación del módulo -->
+                    <button
+                        class="wms-tab is-active px-4 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10"
+                        data-tab="existencias">Existencias</button>
+                    <button
+                        class="wms-tab px-4 py-2 rounded-lg text-sm font-semibold bg-white/50 dark:bg-slate-900/35 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 hover:bg-white/70 dark:hover:bg-slate-900/55 transition-all"
+                        data-tab="entradas">Entradas</button>
+                    <button
+                        class="wms-tab px-4 py-2 rounded-lg text-sm font-semibold bg-white/50 dark:bg-slate-900/35 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 hover:bg-white/70 dark:hover:bg-slate-900/55 transition-all"
+                        data-tab="salidas">Salidas</button>
+                    <button
+                        class="wms-tab px-4 py-2 rounded-lg text-sm font-semibold bg-white/50 dark:bg-slate-900/35 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 hover:bg-white/70 dark:hover:bg-slate-900/55 transition-all"
+                        data-tab="ajustes">Ajustes</button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btnSync" type="button"
+                        class="group inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">
+                        <svg class="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v6h6M20 20v-6h-6M20 8a8 8 0 00-14.828-2M4 16a8 8 0 0014.828 2"></path>
+                        </svg>
+                        Sincronizar
+                    </button>
+                    <button id="btnScan" type="button"
+                        class="group inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold"
+                        title="Simulación (atajo /)">
+                        <svg class="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M4 4h4v2H6v2H4V4zm16 0h-4v2h2v2h2V4zM4 20h4v-2H6v-2H4v4zm16 0h-4v-2h2v-2h2v4z">
+                            </path>
+                        </svg>
+                        Escanear
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECCIÓN EXISTENCIAS -->
+            <section id="sec-existencias" data-section="existencias" class="wms-section">
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-4 md:p-5">
+                    <div class="flex items-end justify-between gap-3 flex-wrap">
+                        <div>
+                            <h2 class="brand-font font-semibold">Existencias</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Búsqueda, filtros, ordenar
+                                columnas y paginación</p>
+                        </div>
+                        <button id="btnOpenHistory" type="button"
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-sm font-semibold shadow-lg shadow-emerald-600/15">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Ver historial
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 mt-4">
+                        <div class="lg:col-span-5">
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Buscar</label>
+                            <input id="stockSearch" type="text"
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                                placeholder="Producto, SKU, almacén, ubicación...">
+                        </div>
+                        <div class="lg:col-span-3">
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Almacén</label>
+                            <select id="filterWarehouse"
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                                <option value="">Todos</option>
+                                <option value="ALM-01">ALM-01</option>
+                                <option value="ALM-02">ALM-02</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Stock</label>
+                            <select id="filterStock"
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                                <option value="">Todos</option>
+                                <option value="ok">OK</option>
+                                <option value="low">Bajo</option>
+                                <option value="out">Sin stock</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-2 flex items-end">
+                            <button id="btnResetFilters" type="button"
+                                class="w-full px-3 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">Limpiar</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 overflow-hidden rounded-xl border border-slate-200/70 dark:border-white/10">
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-slate-50/70 dark:bg-slate-800/30 text-slate-600 dark:text-slate-300">
+                                    <tr class="text-[11px] uppercase tracking-wider font-bold">
+                                        <th class="px-4 py-3 text-left"><button type="button"
+                                                class="sortHeader inline-flex items-center gap-2 hover:text-emerald-600 transition-colors"
+                                                data-sort="product">Producto <span
+                                                    class="sortIcon text-slate-400"></span></button></th>
+                                        <th class="px-4 py-3 text-left"><button type="button"
+                                                class="sortHeader inline-flex items-center gap-2 hover:text-emerald-600 transition-colors"
+                                                data-sort="sku">SKU <span
+                                                    class="sortIcon text-slate-400"></span></button></th>
+                                        <th class="px-4 py-3 text-left"><button type="button"
+                                                class="sortHeader inline-flex items-center gap-2 hover:text-emerald-600 transition-colors"
+                                                data-sort="warehouse">Almacén <span
+                                                    class="sortIcon text-slate-400"></span></button></th>
+                                        <th class="px-4 py-3 text-left"><button type="button"
+                                                class="sortHeader inline-flex items-center gap-2 hover:text-emerald-600 transition-colors"
+                                                data-sort="location">Ubicación <span
+                                                    class="sortIcon text-slate-400"></span></button></th>
+                                        <th class="px-4 py-3 text-right"><button type="button"
+                                                class="sortHeader inline-flex items-center gap-2 hover:text-emerald-600 transition-colors"
+                                                data-sort="qty">Cantidad <span
+                                                    class="sortIcon text-slate-400"></span></button></th>
+                                        <th class="px-4 py-3 text-left">Unidad</th>
+                                        <th class="px-4 py-3 text-left"><button type="button"
+                                                class="sortHeader inline-flex items-center gap-2 hover:text-emerald-600 transition-colors"
+                                                data-sort="lastMove">Último movimiento <span
+                                                    class="sortIcon text-slate-400"></span></button></th>
+                                        <th class="px-4 py-3 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stockTbody"
+                                    class="divide-y divide-slate-200/70 dark:divide-white/10 bg-white/60 dark:bg-slate-900/20">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="stockEmpty"
+                        class="hidden mt-4 border border-dashed border-slate-300/70 dark:border-white/15 rounded-xl p-6 text-center bg-white/40 dark:bg-slate-900/20">
+                        <h3 class="font-semibold">Sin resultados</h3>
+                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Ajusta búsqueda o filtros para ver
+                            existencias.</p>
+                    </div>
+
+                    <div class="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <div class="text-sm text-slate-500 dark:text-slate-400">
+                            <span class="font-semibold text-slate-700 dark:text-slate-200" id="stockCount">0</span>
+                            resultados
+                            <span class="mx-2 text-slate-300 dark:text-white/15">•</span>
+                            Página <span class="font-semibold text-slate-700 dark:text-slate-200"
+                                id="stockPage">1</span>/<span id="stockPages">1</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="btnPrevPage" type="button"
+                                class="px-3 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">Anterior</button>
+                            <button id="btnNextPage" type="button"
+                                class="px-3 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">Siguiente</button>
+                            <select id="pageSize"
+                                class="px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                                <option value="5">5 / pág</option>
+                                <option value="10" selected>10 / pág</option>
+                                <option value="25">25 / pág</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN ENTRADAS -->
+            <section id="sec-entradas" data-section="entradas" class="wms-section hidden">
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-4 md:p-5 space-y-4">
+                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                        <div>
+                            <h2 class="brand-font font-semibold">Entradas de Inventario</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Registrar ingreso de inventario
+                            </p>
+                        </div>
+                        <button type="button"
+                            class="btnOpenProductModal inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold"
+                            data-context="entrada">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Agregar producto
+                        </button>
+                    </div>
+
+                    <form id="formEntrada" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Tipo
+                                    movimiento</label>
+                                <select id="entradaTipo"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                                    <option>Compra</option>
+                                    <option>Transferencia</option>
+                                    <option>Devolución</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Fecha</label>
+                                <input id="entradaFecha" type="date"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Referencia</label>
+                                <input id="entradaRef" type="text"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                                    placeholder="OC-000123 / Remisión / Folio">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Proveedor</label>
+                                <input id="entradaProveedor" type="text"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                                    placeholder="Proveedor S.A.">
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Usuario</label>
+                            <input id="entradaUsuario" type="text" value="Operador WMS" readonly
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/50 dark:bg-slate-800/30 border border-slate-200/60 dark:border-white/10 text-sm text-slate-600 dark:text-slate-300">
+                        </div>
+
+                        <div class="overflow-hidden rounded-xl border border-slate-200/70 dark:border-white/10">
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="min-w-full text-sm">
+                                    <thead
+                                        class="bg-slate-50/70 dark:bg-slate-800/30 text-slate-600 dark:text-slate-300">
+                                        <tr class="text-[11px] uppercase tracking-wider font-bold">
+                                            <th class="px-4 py-3 text-left">Producto</th>
+                                            <th class="px-4 py-3 text-left">Ubicación destino</th>
+                                            <th class="px-4 py-3 text-right">Cantidad</th>
+                                            <th class="px-4 py-3 text-left">Unidad</th>
+                                            <th class="px-4 py-3 text-right">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="entradaTbody"
+                                        class="divide-y divide-slate-200/70 dark:divide-white/10 bg-white/60 dark:bg-slate-900/20">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="entradaEmpty"
+                            class="border border-dashed border-slate-300/70 dark:border-white/15 rounded-xl p-6 text-center bg-white/40 dark:bg-slate-900/20">
+                            <h3 class="font-semibold">Agrega productos</h3>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Usa el modal “Agregar producto”.
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-end">
+                            <button id="btnEntradaSave" type="submit" disabled
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-sm font-semibold shadow-lg shadow-emerald-600/15 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Guardar movimiento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- SECCIÓN SALIDAS -->
+            <section id="sec-salidas" data-section="salidas" class="wms-section hidden">
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-4 md:p-5 space-y-4">
+                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                        <div>
+                            <h2 class="brand-font font-semibold">Salidas de Inventario</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Valida stock por ubicación origen
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="stockBlockBadge"
+                                class="hidden inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300 border border-red-100/70 dark:border-red-500/20 text-xs font-bold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>Bloqueado por stock
+                            </span>
+                            <span id="stockOkBadge"
+                                class="hidden inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-100/70 dark:border-emerald-500/15 text-xs font-bold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Listo para guardar
+                            </span>
+                        </div>
+                    </div>
+
+                    <form id="formSalida" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Tipo
+                                    movimiento</label>
+                                <select id="salidaTipo"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                                    <option>Venta / Despacho</option>
+                                    <option>Transferencia</option>
+                                    <option>Consumo interno</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Fecha</label>
+                                <input id="salidaFecha" type="date"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Referencia</label>
+                                <input id="salidaRef" type="text"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                                    placeholder="PED-000245 / OT / Folio">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Destino</label>
+                                <input id="salidaDestino" type="text"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                                    placeholder="Cliente / Área / Almacén destino">
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Usuario</label>
+                            <input id="salidaUsuario" type="text" value="Operador WMS" readonly
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/50 dark:bg-slate-800/30 border border-slate-200/60 dark:border-white/10 text-sm text-slate-600 dark:text-slate-300">
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3 flex-wrap">
+                            <button id="btnSalidaAdd" type="button"
+                                class="btnOpenProductModal inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold"
+                                data-context="salida">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Agregar producto
+                            </button>
+                            <button id="btnSalidaSave" type="submit" disabled
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-sm font-semibold shadow-lg shadow-emerald-600/15 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Guardar movimiento
+                            </button>
+                        </div>
+
+                        <div class="overflow-hidden rounded-xl border border-slate-200/70 dark:border-white/10">
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="min-w-full text-sm">
+                                    <thead
+                                        class="bg-slate-50/70 dark:bg-slate-800/30 text-slate-600 dark:text-slate-300">
+                                        <tr class="text-[11px] uppercase tracking-wider font-bold">
+                                            <th class="px-4 py-3 text-left">Producto</th>
+                                            <th class="px-4 py-3 text-left">Ubicación origen</th>
+                                            <th class="px-4 py-3 text-right">Cantidad</th>
+                                            <th class="px-4 py-3 text-left">Unidad</th>
+                                            <th class="px-4 py-3 text-left">Stock</th>
+                                            <th class="px-4 py-3 text-right">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="salidaTbody"
+                                        class="divide-y divide-slate-200/70 dark:divide-white/10 bg-white/60 dark:bg-slate-900/20">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="salidaEmpty"
+                            class="border border-dashed border-slate-300/70 dark:border-white/15 rounded-xl p-6 text-center bg-white/40 dark:bg-slate-900/20">
+                            <h3 class="font-semibold">Agrega productos</h3>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">La validación bloqueará
+                                inconsistencias.</p>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- SECCIÓN AJUSTES -->
+            <section id="sec-ajustes" data-section="ajustes" class="wms-section hidden">
+                <div
+                    class="rounded-xl bg-white/70 dark:bg-slate-900/55 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-soft p-4 md:p-5 space-y-4">
+                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                        <div>
+                            <h2 class="brand-font font-semibold">Ajustes de Inventario</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Motivo obligatorio</p>
+                        </div>
+                        <span id="ajusteDeltaBadge"
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-white/10 text-xs font-bold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Diferencia: —
+                        </span>
+                    </div>
+
+                    <form id="formAjuste" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Producto</label>
+                                <select id="ajusteProducto"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"></select>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Ubicación</label>
+                                <select id="ajusteUbicacion"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"></select>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Cantidad
+                                    actual</label>
+                                <input id="ajusteActual" type="number" readonly
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/50 dark:bg-slate-800/30 border border-slate-200/60 dark:border-white/10 text-sm text-slate-600 dark:text-slate-300">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Cantidad
+                                    correcta</label>
+                                <input id="ajusteCorrecta" type="number"
+                                    class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                                    placeholder="Ej: 120">
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Motivo</label>
+                            <select id="ajusteMotivo"
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                                <option>Conteo físico</option>
+                                <option>Merma</option>
+                                <option>Error sistema</option>
+                                <option>Producto dañado</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-end">
+                            <button id="btnAjusteSave" type="submit"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-sm font-semibold shadow-lg shadow-emerald-600/15">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Guardar ajuste
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: Nuevo movimiento -->
+    <div id="modalMovimiento" class="hidden fixed inset-0 z-[80]">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div
+                class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-white/10 shadow-2xl overflow-hidden">
+                <div
+                    class="px-5 py-4 border-b border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-between">
+                    <div>
+                        <h3 class="brand-font font-semibold">Nuevo movimiento</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Elige el tipo de operación</p>
+                    </div>
+                    <button type="button" data-close="modalMovimiento"
+                        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                        aria-label="Cerrar">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-5 space-y-3">
+                    <button type="button"
+                        class="modalMoveChoice w-full text-left p-4 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-slate-900/20 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all"
+                        data-move="entradas">
+                        <p class="font-semibold">Entrada</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Registrar ingreso de inventario</p>
+                    </button>
+                    <button type="button"
+                        class="modalMoveChoice w-full text-left p-4 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-slate-900/20 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all"
+                        data-move="salidas">
+                        <p class="font-semibold">Salida</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Registrar salida con validación de
+                            stock</p>
+                    </button>
+                    <button type="button"
+                        class="modalMoveChoice w-full text-left p-4 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-slate-900/20 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all"
+                        data-move="ajustes">
+                        <p class="font-semibold">Ajuste</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Corregir diferencias de inventario
+                        </p>
+                    </button>
+                </div>
+                <div
+                    class="px-5 py-4 border-t border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-end gap-2">
+                    <button type="button" data-close="modalMovimiento"
+                        class="px-4 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalMotivos" class="hidden fixed inset-0 z-[80]">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div
+                class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-white/10 shadow-2xl overflow-hidden">
+                <div
+                    class="px-5 py-4 border-b border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-between">
+                    <div>
+                        <h3 class="brand-font font-semibold">Motivos de ajuste</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Selección obligatoria para
+                            auditoría
+                        </p>
+                    </div>
+                    <button type="button" data-close="modalMotivos"
+                        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                        aria-label="Cerrar">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-5 space-y-3">
+                    <div
+                        class="p-4 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-slate-900/20">
+                        <p class="font-semibold">Conteo físico</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Diferencia detectada en conteo
+                            manual.
+                        </p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-slate-900/20">
+                        <p class="font-semibold">Merma</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Pérdida por manejo, caducidad o
+                            desperdicio.</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-slate-900/20">
+                        <p class="font-semibold">Error sistema</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Corrección por registro duplicado o
+                            inconsistencia.</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-slate-900/20">
+                        <p class="font-semibold">Producto dañado</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Baja por daño o no conformidad.</p>
+                    </div>
+                </div>
+                <div
+                    class="px-5 py-4 border-t border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-end gap-2">
+                    <button type="button" data-close="modalMotivos"
+                        class="px-4 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Agregar producto -->
+    <div id="modalProducto" class="hidden fixed inset-0 z-[80]">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div
+                class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-white/10 shadow-2xl overflow-hidden">
+                <div
+                    class="px-5 py-4 border-b border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-between">
+                    <div>
+                        <h3 class="brand-font font-semibold">Agregar producto</h3>
+                        <p id="productPickerContext" class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Contexto:
+                            —</p>
+                    </div>
+                    <button type="button" data-close="modalProducto"
+                        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                        aria-label="Cerrar">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                        <div class="md:col-span-6">
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Buscar</label>
+                            <input id="productSearch" type="text"
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"
+                                placeholder="Nombre o SKU">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label id="locLabel"
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Ubicación</label>
+                            <select id="productLocation"
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm"></select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Cantidad</label>
+                            <input id="productQty" type="number" min="1" value="1"
+                                class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label
+                                class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Unidad</label>
+                            <select id="productUnit"
+                                class="mt-1 w-full px-2 py-2 rounded-lg bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all text-sm">
+                                <option>pz</option>
+                                <option>caja</option>
+                                <option>kg</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden rounded-xl border border-slate-200/70 dark:border-white/10">
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-slate-50/70 dark:bg-slate-800/30 text-slate-600 dark:text-slate-300">
+                                    <tr class="text-[11px] uppercase tracking-wider font-bold">
+                                        <th class="px-4 py-3 text-left">Producto</th>
+                                        <th class="px-4 py-3 text-left">SKU</th>
+                                        <th class="px-4 py-3 text-left">Almacén</th>
+                                        <th class="px-4 py-3 text-left">Stock</th>
+                                        <th class="px-4 py-3 text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productPickerTbody"
+                                    class="divide-y divide-slate-200/70 dark:divide-white/10 bg-white/60 dark:bg-slate-900/20">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="productPickerEmpty"
+                        class="hidden border border-dashed border-slate-300/70 dark:border-white/15 rounded-xl p-6 text-center bg-white/40 dark:bg-slate-900/20">
+                        <h3 class="font-semibold">Sin resultados</h3>
+                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Prueba con otro nombre o SKU.</p>
+                    </div>
+                </div>
+                <div
+                    class="px-5 py-4 border-t border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-end gap-2">
+                    <button type="button" data-close="modalProducto"
+                        class="px-4 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Historial -->
+    <div id="modalHistorial" class="hidden fixed inset-0 z-[80]">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div
+                class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-white/10 shadow-2xl overflow-hidden">
+                <div
+                    class="px-5 py-4 border-b border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-between">
+                    <div>
+                        <h3 class="brand-font font-semibold">Historial</h3>
+                        <p id="histTitle" class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">—</p>
+                    </div>
+                    <button type="button" data-close="modalHistorial"
+                        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                        aria-label="Cerrar">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-5">
+                    <div id="histLoader" class="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+                        <div
+                            class="h-5 w-5 rounded-full border-2 border-slate-300 dark:border-slate-600 border-t-emerald-500 animate-spin">
+                        </div>
+                        Cargando historial...
+                    </div>
+                    <div id="histBody" class="hidden">
+                        <div class="relative pl-4 border-l border-slate-200 dark:border-white/10 space-y-4">
+                            <div class="relative">
+                                <div
+                                    class="absolute -left-[9px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-white dark:ring-slate-900">
+                                </div>
+                                <p class="text-sm font-semibold">Entrada</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">+25 pz • ALM-01 / A-01-03 •
+                                    Ref: OC-000123</p>
+                                <p class="text-[11px] text-slate-400 mt-1">Hoy, 10:12</p>
+                            </div>
+                            <div class="relative">
+                                <div
+                                    class="absolute -left-[9px] top-1 w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600 ring-4 ring-white dark:ring-slate-900">
+                                </div>
+                                <p class="text-sm font-semibold">Salida</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">-10 pz • ALM-01 / A-01-03 •
+                                    Ref: PED-000245</p>
+                                <p class="text-[11px] text-slate-400 mt-1">Ayer, 16:40</p>
+                            </div>
+                            <div class="relative">
+                                <div
+                                    class="absolute -left-[9px] top-1 w-2.5 h-2.5 rounded-full bg-amber-500 ring-4 ring-white dark:ring-slate-900">
+                                </div>
+                                <p class="text-sm font-semibold">Ajuste</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Δ -2 pz • Motivo: Conteo
+                                    físico</p>
+                                <p class="text-[11px] text-slate-400 mt-1">Mar 03, 09:05</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="px-5 py-4 border-t border-slate-200/70 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-end gap-2">
+                    <button type="button" data-close="modalHistorial"
+                        class="px-4 py-2 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-sm font-semibold">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div id="toastHost" class="fixed z-[90] bottom-4 right-4 w-full max-w-sm space-y-2 px-4 md:px-0"></div>
+
+    <!-- JS (mínimo) -->
+    <script>
+        const $ = (id) => document.getElementById(id);
+        const esc = (s) => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", "&#039;");
+        const toast = (msg, tone = 'ok') => {
+            const host = $('toastHost');
+            const tones = { ok: 'bg-emerald-600', warn: 'bg-amber-500', err: 'bg-red-600', info: 'bg-slate-900' };
+            const el = document.createElement('div');
+            el.className = `rounded-xl shadow-2xl border border-white/10 px-4 py-3 ${tones[tone] || tones.ok} text-white flex items-start justify-between gap-3`;
+            el.innerHTML = `<div class="text-sm font-semibold">${esc(msg)}</div>
+        <button type="button" class="text-white/80 hover:text-white transition-colors" aria-label="Cerrar">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>`;
+            el.querySelector('button').addEventListener('click', () => el.remove());
+            host.appendChild(el);
+            setTimeout(() => el.remove(), 3200);
+        };
+        const openModal = (id) => $(id).classList.remove('hidden');
+        const closeModal = (id) => $(id).classList.add('hidden');
+
+        // Datos demo
+        const STOCK = [
+            { product: 'Caja Corrugada 30x20', sku: 'BX-3020', warehouse: 'ALM-01', location: 'A-01-03', qty: 120, unit: 'pz', lastMove: 'Hoy 10:12', min: 40 },
+            { product: 'Etiqueta Térmica 4x6', sku: 'LBL-4X6', warehouse: 'ALM-01', location: 'B-02-01', qty: 18, unit: 'pz', lastMove: 'Ayer 16:40', min: 25 },
+            { product: 'Cinta Embalaje 48mm', sku: 'TAPE-48', warehouse: 'ALM-02', location: 'C-01-02', qty: 0, unit: 'pz', lastMove: 'Mar 03 09:05', min: 15 },
+            { product: 'Film Stretch', sku: 'FILM-STR', warehouse: 'ALM-01', location: 'E-01-01', qty: 12, unit: 'pz', lastMove: 'Hoy 11:02', min: 20 },
+            { product: 'Pallet Madera', sku: 'PLT-W', warehouse: 'ALM-02', location: 'PATIO-01', qty: 8, unit: 'pz', lastMove: 'Feb 27 17:22', min: 10 }
+        ];
+        const LOCATIONS = { 'ALM-01': ['A-01-03', 'B-02-01', 'E-01-01'], 'ALM-02': ['C-01-02', 'PATIO-01'] };
+        const stockByKey = new Map(STOCK.map(r => [`${r.sku}__${r.warehouse}__${r.location}`, r.qty]));
+        const levelOf = (r) => (r.qty <= 0 ? 'out' : (r.qty < r.min ? 'low' : 'ok'));
+
+        // Tabs
+        const sections = {
+            existencias: $('sec-existencias'),
+            entradas: $('sec-entradas'),
+            salidas: $('sec-salidas'),
+            ajustes: $('sec-ajustes')
+        };
+        const setTab = (tab) => {
+            document.querySelectorAll('.wms-tab').forEach(b => {
+                const on = b.dataset.tab === tab;
+                b.classList.toggle('is-active', on);
+                b.classList.toggle('bg-white/70', on);
+                b.classList.toggle('dark:bg-slate-900/55', on);
+                b.classList.toggle('border-slate-200/70', on);
+                b.classList.toggle('dark:border-white/10', on);
+                b.classList.toggle('bg-white/50', !on);
+                b.classList.toggle('dark:bg-slate-900/35', !on);
+            });
+            Object.entries(sections).forEach(([k, el]) => el.classList.toggle('hidden', k !== tab));
+        };
+        document.querySelectorAll('.wms-tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+        document.querySelectorAll('.jumpBtn').forEach(b => b.addEventListener('click', () => setTab(b.dataset.jump)));
+
+        const globalSearch = $('globalSearch');
+        if (globalSearch) {
+            globalSearch.addEventListener('input', (e) => {
+                if (!sections.existencias.classList.contains('hidden')) {
+                    $('stockSearch').value = e.target.value;
+                    stockState.q = e.target.value;
+                    stockState.page = 1;
+                    renderStock();
+                }
+            });
+            globalSearch.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                setTab('existencias');
+                $('stockSearch').value = e.target.value;
+                stockState.q = e.target.value;
+                stockState.page = 1;
+                renderStock();
+                $('stockSearch').focus();
+            });
+        }
+
+        // Existencias: sort + filter + pagination
+        const stockState = { q: '', wh: '', lvl: '', sort: 'product', dir: 'asc', page: 1, size: 10 };
+        const renderSortIcons = () => {
+            document.querySelectorAll('.sortHeader').forEach(btn => {
+                const icon = btn.querySelector('.sortIcon');
+                if (!icon) return;
+                if (btn.dataset.sort !== stockState.sort) { icon.innerHTML = ''; return; }
+                icon.innerHTML = stockState.dir === 'asc'
+                    ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>'
+                    : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
+            });
+        };
+        const renderStock = () => {
+            let rows = STOCK.slice();
+            const q = stockState.q.trim().toLowerCase();
+            if (q) rows = rows.filter(r => (r.product + ' ' + r.sku + ' ' + r.warehouse + ' ' + r.location).toLowerCase().includes(q));
+            if (stockState.wh) rows = rows.filter(r => r.warehouse === stockState.wh);
+            if (stockState.lvl) rows = rows.filter(r => levelOf(r) === stockState.lvl);
+            rows.sort((a, b) => {
+                const k = stockState.sort;
+                const dir = stockState.dir === 'asc' ? 1 : -1;
+                const va = a[k], vb = b[k];
+                if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
+                return String(va).localeCompare(String(vb), 'es', { numeric: true }) * dir;
+            });
+            const total = rows.length;
+            const pages = Math.max(1, Math.ceil(total / stockState.size));
+            stockState.page = Math.min(stockState.page, pages);
+            const start = (stockState.page - 1) * stockState.size;
+            const slice = rows.slice(start, start + stockState.size);
+            $('stockCount').textContent = total;
+            $('stockPages').textContent = pages;
+            $('stockPage').textContent = stockState.page;
+            $('kpiSkus').textContent = new Set(STOCK.map(r => r.sku)).size;
+            $('stockEmpty').classList.toggle('hidden', total !== 0);
+            const tbody = $('stockTbody');
+            tbody.innerHTML = '';
+            slice.forEach(r => {
+                const lvl = levelOf(r);
+                const badge = lvl === 'ok'
+                    ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-100/70 dark:border-emerald-500/15'
+                    : (lvl === 'low'
+                        ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-100/70 dark:border-amber-500/20'
+                        : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300 border-red-100/70 dark:border-red-500/20');
+                const badgeText = lvl === 'ok' ? 'OK' : (lvl === 'low' ? 'Bajo' : 'Sin stock');
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-emerald-50/40 dark:hover:bg-emerald-500/5 transition-colors';
+                tr.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="font-semibold">${esc(r.product)}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono">${esc(r.sku)}</div>
+          </td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600 dark:text-slate-300">${esc(r.sku)}</td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(r.warehouse)}</td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(r.location)}</td>
+          <td class="px-4 py-3 text-right">
+            <div class="inline-flex items-center gap-2 justify-end">
+              <span class="font-mono font-bold">${r.qty}</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full border text-[11px] font-bold ${badge}">${badgeText}</span>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(r.unit)}</td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(r.lastMove)}</td>
+          <td class="px-4 py-3 text-right">
+            <button type="button" class="btnRowHistory inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-all text-xs font-semibold" data-sku="${esc(r.sku)}" data-product="${esc(r.product)}">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Ver historial
+            </button>
+          </td>`;
+                tbody.appendChild(tr);
+            });
+            renderSortIcons();
+        };
+        $('stockSearch').addEventListener('input', (e) => { stockState.q = e.target.value; stockState.page = 1; renderStock(); });
+        $('filterWarehouse').addEventListener('change', (e) => { stockState.wh = e.target.value; stockState.page = 1; renderStock(); });
+        $('filterStock').addEventListener('change', (e) => { stockState.lvl = e.target.value; stockState.page = 1; renderStock(); });
+        $('btnResetFilters').addEventListener('click', () => {
+            stockState.q = ''; stockState.wh = ''; stockState.lvl = ''; stockState.page = 1;
+            $('stockSearch').value = ''; $('filterWarehouse').value = ''; $('filterStock').value = '';
+            renderStock();
+        });
+        $('btnPrevPage').addEventListener('click', () => { stockState.page = Math.max(1, stockState.page - 1); renderStock(); });
+        $('btnNextPage').addEventListener('click', () => { stockState.page += 1; renderStock(); });
+        $('pageSize').addEventListener('change', (e) => { stockState.size = Number(e.target.value); stockState.page = 1; renderStock(); });
+        document.querySelectorAll('.sortHeader').forEach(btn => btn.addEventListener('click', () => {
+            const k = btn.dataset.sort;
+            if (stockState.sort === k) stockState.dir = stockState.dir === 'asc' ? 'desc' : 'asc';
+            else { stockState.sort = k; stockState.dir = 'asc'; }
+            renderStock();
+        }));
+        $('btnQuickLowStock').addEventListener('click', () => {
+            stockState.lvl = 'low';
+            $('filterStock').value = 'low';
+            stockState.page = 1;
+            renderStock();
+            toast('Filtro aplicado: Bajo stock', 'info');
+        });
+
+        // Modales
+        $('btnNuevoMovimiento').addEventListener('click', () => openModal('modalMovimiento'));
+        $('btnMotivos').addEventListener('click', () => openModal('modalMotivos'));
+        document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
+        document.querySelectorAll('.modalMoveChoice').forEach(btn => btn.addEventListener('click', () => {
+            closeModal('modalMovimiento');
+            setTab(btn.dataset.move);
+        }));
+
+        const openHistory = ({ product, sku }) => {
+            $('histTitle').textContent = `${product} • ${sku}`;
+            $('histBody').classList.add('hidden');
+            $('histLoader').classList.remove('hidden');
+            openModal('modalHistorial');
+            setTimeout(() => { $('histLoader').classList.add('hidden'); $('histBody').classList.remove('hidden'); }, 550);
+        };
+        $('btnOpenHistory').addEventListener('click', () => openHistory({ product: STOCK[0].product, sku: STOCK[0].sku }));
+        $('btnHistRapido').addEventListener('click', () => openHistory({ product: STOCK[1].product, sku: STOCK[1].sku }));
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.btnRowHistory');
+            if (!btn) return;
+            openHistory({ product: btn.dataset.product, sku: btn.dataset.sku });
+        });
+
+        $('btnSync').addEventListener('click', () => {
+            toast('Sincronizando... (simulación)', 'info');
+            setTimeout(() => toast('Sincronización OK', 'ok'), 900);
+        });
+
+        // Picker de productos
+        let pickerContext = 'entrada';
+        let pickedSku = null;
+        const entradaItems = [];
+        const salidaItems = [];
+
+        const fillLocations = (context, warehouseHint = 'ALM-01') => {
+            $('locLabel').textContent = context === 'salida' ? 'Ubicación origen' : 'Ubicación destino';
+            const opts = (LOCATIONS[warehouseHint] || LOCATIONS['ALM-01']).map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+            $('productLocation').innerHTML = opts;
+        };
+        const renderPicker = () => {
+            const q = $('productSearch').value.trim().toLowerCase();
+            let rows = STOCK.slice();
+            if (q) rows = rows.filter(r => (r.product + ' ' + r.sku).toLowerCase().includes(q));
+            const tbody = $('productPickerTbody');
+            tbody.innerHTML = '';
+            $('productPickerEmpty').classList.toggle('hidden', rows.length !== 0);
+            rows.forEach(r => {
+                const stock = stockByKey.get(`${r.sku}__${r.warehouse}__${r.location}`) ?? r.qty;
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-emerald-50/40 dark:hover:bg-emerald-500/5 transition-colors';
+                tr.innerHTML = `
+          <td class="px-4 py-3 font-semibold">${esc(r.product)}</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600 dark:text-slate-300">${esc(r.sku)}</td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(r.warehouse)}</td>
+          <td class="px-4 py-3"><span class="font-mono font-bold">${stock}</span> <span class="text-xs text-slate-500 dark:text-slate-400">(${esc(r.location)})</span></td>
+          <td class="px-4 py-3 text-right">
+            <button type="button" class="btnPick px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-all text-xs font-semibold" data-sku="${esc(r.sku)}" data-product="${esc(r.product)}" data-warehouse="${esc(r.warehouse)}" data-location="${esc(r.location)}">Seleccionar</button>
+          </td>`;
+                tbody.appendChild(tr);
+            });
+        };
+        document.querySelectorAll('.btnOpenProductModal').forEach(btn => btn.addEventListener('click', () => {
+            pickerContext = btn.dataset.context || 'entrada';
+            pickedSku = null;
+            $('productPickerContext').textContent = `Contexto: ${pickerContext === 'salida' ? 'Salida' : 'Entrada'}`;
+            $('productSearch').value = '';
+            $('productQty').value = 1;
+            $('productUnit').value = 'pz';
+            fillLocations(pickerContext);
+            renderPicker();
+            openModal('modalProducto');
+        }));
+        $('productSearch').addEventListener('input', renderPicker);
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.btnPick');
+            if (!btn) return;
+            pickedSku = btn.dataset.sku;
+            fillLocations(pickerContext, btn.dataset.warehouse);
+            $('productLocation').value = btn.dataset.location;
+            toast(`Producto seleccionado: ${btn.dataset.sku}`, 'info');
+        });
+        const commitPicked = () => {
+            if (!pickedSku) { toast('Selecciona un producto primero', 'warn'); return; }
+            const row = STOCK.find(r => r.sku === pickedSku);
+            if (!row) { toast('Producto no encontrado', 'err'); return; }
+            const qty = Math.max(1, Number($('productQty').value || 1));
+            const unit = $('productUnit').value;
+            const location = $('productLocation').value;
+            if (pickerContext === 'entrada') {
+                entradaItems.push({ sku: row.sku, product: row.product, location, qty, unit });
+                renderEntrada();
+                toast('Producto agregado a Entrada', 'ok');
+            } else {
+                salidaItems.push({ sku: row.sku, product: row.product, warehouse: row.warehouse, location, qty, unit, available: 0, ok: true });
+                renderSalida();
+                toast('Producto agregado a Salida', 'ok');
+            }
+            closeModal('modalProducto');
+        };
+        $('modalProducto').addEventListener('dblclick', () => commitPicked());
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !$('modalProducto').classList.contains('hidden')) { e.preventDefault(); commitPicked(); }
+            if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); toast('Escaneo (simulación): abre picker', 'info'); setTab('entradas'); document.querySelector('[data-context="entrada"]').click(); }
+        });
+        $('btnScan').addEventListener('click', () => { toast('Escaneo (simulación): abre picker', 'info'); setTab('entradas'); document.querySelector('[data-context="entrada"]').click(); });
+
+        // Entradas render
+        const renderEntrada = () => {
+            const tbody = $('entradaTbody');
+            tbody.innerHTML = '';
+            $('entradaEmpty').classList.toggle('hidden', entradaItems.length !== 0);
+            $('btnEntradaSave').disabled = entradaItems.length === 0;
+            entradaItems.forEach((it, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="font-semibold">${esc(it.product)}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono">${esc(it.sku)}</div>
+          </td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(it.location)}</td>
+          <td class="px-4 py-3 text-right font-mono font-bold">${it.qty}</td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(it.unit)}</td>
+          <td class="px-4 py-3 text-right">
+            <button type="button" class="btnRemoveEntrada px-3 py-1.5 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-red-200 dark:hover:border-red-500/20 transition-all text-xs font-semibold text-red-600 dark:text-red-300" data-idx="${idx}">Quitar</button>
+          </td>`;
+                tbody.appendChild(tr);
+            });
+        };
+
+        // Salidas validate + render
+        const validateSalidas = () => {
+            let blocked = false;
+            salidaItems.forEach(it => {
+                const key = `${it.sku}__${it.warehouse}__${it.location}`;
+                const available = stockByKey.get(key) ?? 0;
+                it.available = available;
+                it.ok = it.qty <= available;
+                if (!it.ok) blocked = true;
+            });
+            $('stockBlockBadge').classList.toggle('hidden', !blocked);
+            $('stockOkBadge').classList.toggle('hidden', blocked || salidaItems.length === 0);
+            $('btnSalidaSave').disabled = blocked || salidaItems.length === 0;
+        };
+        const renderSalida = () => {
+            const tbody = $('salidaTbody');
+            tbody.innerHTML = '';
+            $('salidaEmpty').classList.toggle('hidden', salidaItems.length !== 0);
+            validateSalidas();
+            salidaItems.forEach((it, idx) => {
+                const badge = it.ok
+                    ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-100/70 dark:border-emerald-500/15'
+                    : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300 border-red-100/70 dark:border-red-500/20';
+                const label = it.ok ? 'OK' : 'Insuficiente';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="font-semibold">${esc(it.product)}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono">${esc(it.sku)}</div>
+          </td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(it.location)}</td>
+          <td class="px-4 py-3 text-right font-mono font-bold">${it.qty}</td>
+          <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${esc(it.unit)}</td>
+          <td class="px-4 py-3">
+            <div class="inline-flex items-center gap-2">
+              <span class="font-mono font-bold">${it.available}</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full border text-[11px] font-bold ${badge}">${label}</span>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-right">
+            <button type="button" class="btnRemoveSalida px-3 py-1.5 rounded-lg bg-white/70 dark:bg-slate-900/35 border border-slate-200/70 dark:border-white/10 hover:border-red-200 dark:hover:border-red-500/20 transition-all text-xs font-semibold text-red-600 dark:text-red-300" data-idx="${idx}">Quitar</button>
+          </td>`;
+                tbody.appendChild(tr);
+            });
+        };
+
+        document.addEventListener('click', (e) => {
+            const r1 = e.target.closest('.btnRemoveEntrada');
+            if (r1) { entradaItems.splice(Number(r1.dataset.idx), 1); renderEntrada(); toast('Producto removido de Entrada', 'info'); }
+            const r2 = e.target.closest('.btnRemoveSalida');
+            if (r2) { salidaItems.splice(Number(r2.dataset.idx), 1); renderSalida(); toast('Producto removido de Salida', 'info'); }
+        });
+
+        $('formEntrada').addEventListener('submit', (e) => {
+            e.preventDefault();
+            toast('Entrada guardada (simulación)', 'ok');
+            entradaItems.length = 0;
+            renderEntrada();
+        });
+        $('formSalida').addEventListener('submit', (e) => {
+            e.preventDefault();
+            validateSalidas();
+            if ($('btnSalidaSave').disabled) { toast('No se puede guardar: stock insuficiente', 'err'); return; }
+            toast('Salida guardada (simulación)', 'ok');
+            salidaItems.length = 0;
+            renderSalida();
+        });
+
+        // Ajustes: init + delta
+        const renderAjusteDelta = () => {
+            const cur = Number($('ajusteActual').value || 0);
+            const cor = Number($('ajusteCorrecta').value || 0);
+            const delta = cor - cur;
+            const dotClass = delta === 0 ? 'bg-slate-400' : (delta > 0 ? 'bg-emerald-500' : 'bg-red-500');
+            $('ajusteDeltaBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>Diferencia: ${delta >= 0 ? '+' : ''}${delta}`;
+        };
+        const initAjustes = () => {
+            const uniq = Array.from(new Map(STOCK.map(r => [r.sku, r.product])).entries()).map(([sku, product]) => ({ sku, product }));
+            $('ajusteProducto').innerHTML = uniq.map(p => `<option value="${esc(p.sku)}">${esc(p.product)} (${esc(p.sku)})</option>`).join('');
+            const allLoc = Array.from(new Set(Object.values(LOCATIONS).flat()));
+            $('ajusteUbicacion').innerHTML = allLoc.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+            $('ajusteProducto').value = uniq[0]?.sku || '';
+            $('ajusteUbicacion').value = allLoc[0] || '';
+            updateAjusteActual();
+        };
+        const updateAjusteActual = () => {
+            const sku = $('ajusteProducto').value;
+            const loc = $('ajusteUbicacion').value;
+            const row = STOCK.find(r => r.sku === sku);
+            const wh = row?.warehouse || 'ALM-01';
+            const key = `${sku}__${wh}__${loc}`;
+            const val = stockByKey.get(key) ?? 0;
+            $('ajusteActual').value = val;
+            renderAjusteDelta();
+        };
+        $('ajusteProducto').addEventListener('change', updateAjusteActual);
+        $('ajusteUbicacion').addEventListener('change', updateAjusteActual);
+        $('ajusteCorrecta').addEventListener('input', renderAjusteDelta);
+        $('formAjuste').addEventListener('submit', (e) => {
+            e.preventDefault();
+            toast('Ajuste guardado (simulación)', 'ok');
+            $('ajusteCorrecta').value = '';
+            renderAjusteDelta();
+        });
+
+        // Init
+        renderStock();
+        initAjustes();
+    </script>
+</body>
+
+</html>
